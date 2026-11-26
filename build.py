@@ -725,7 +725,7 @@ def build():
         depth = p["out"].count("/")
         root = "../" * depth if depth else "./"
         if p["src"] == "404.html":
-            root = "/pathfindersadvisors-redesign/" if not LIVE else "/"
+            root = "/"  # 404 is served at any depth, so its links must be absolute
         body = render_body((SRC / p["src"]).read_text(encoding="utf-8"), {"root": root, "page": p})
         dest = OUT / p["out"]
         dest.parent.mkdir(parents=True, exist_ok=True)
