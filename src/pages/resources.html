@@ -1,0 +1,43 @@
+<section class="page-hero">
+  {{ROUTE}}
+  <div class="container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{{ROOT}}">Home</a></li><li aria-current="page">Knowledge Base</li></ol></nav>
+    <span class="eyebrow">Knowledge base</span>
+    <h1>Resources &amp; insights for college planning</h1>
+    <p class="lead">Plain-language guidance on admissions, careers, testing and paying for college, written for US families and the professionals who support them.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <form class="kb-search" role="search" data-kb-search>
+      <label for="kb-q" class="sr-only">Search the knowledge base</label>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="kb-q" type="search" name="q" placeholder="Search articles, e.g. sophomores, FAFSA, 529, scholarships" autocomplete="off">
+      <button type="button" class="kb-clear" aria-label="Clear search" hidden>&times;</button>
+    </form>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px">
+      {{FILTERS}}
+      <p class="muted" style="margin:0 0 32px" data-post-count aria-live="polite">{{ARTICLE_COUNT}} articles</p>
+    </div>
+    {{ARTICLES:all}}
+    <div class="card kb-empty" hidden>
+      <h3>No articles match that search yet.</h3>
+      <p class="muted" style="margin:0">Try a broader word like &ldquo;scholarships&rdquo;, &ldquo;FAFSA&rdquo; or &ldquo;careers&rdquo;, or <a href="{{ROOT}}contact-us/#book">ask an advisor directly</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-cream" id="free-guides">
+  <div class="container split split-wide">
+    <div class="reveal">
+      <span class="eyebrow">Free downloads</span>
+      <h2>Checklists to keep your family on track.</h2>
+      <p class="lead" style="margin-bottom:28px">Our two most-requested guides, free for every family.</p>
+      {{GUIDES}}
+    </div>
+    <div class="reveal">{{FORM:resource}}</div>
+  </div>
+</section>
+
+{{CTA}}
