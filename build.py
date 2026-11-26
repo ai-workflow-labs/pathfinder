@@ -99,13 +99,11 @@ ROUTE_SVG = """<div class="hero-route route-draw" aria-hidden="true"><svg viewBo
 # --------------------------------------------------------------------------- data
 GOOGLE_REVIEWS = [
     ("Stephanie Mckinnon", "Aaron was very helpful as we navigated high school in preparation for college applications for our oldest son. He assisted with class schedule recommendations (such as foreign language planning), he provided specific guidance around building his college “resume,” and he also spent a significant amount of time between 9th and 11th grades helping my son identify his career path in advance of college applications. As we approached senior year he managed our timeline and kept us ahead of application deadlines. He provided guidance, review and feedback of my son’s college essay. He provided recommendations on when to set up campus tours. He talked with us about ensuring our college debt was in alignment with future career income expectations. At the end, I’m thrilled to share that my son was accepted to every university that he applied to, and I do believe we have Aaron to thank for much of this success!"),
-    ("Alyssa Reddy", "Aaron and his team were super helpful with helping me prepare for college! They were awesome to work with and helped get me into my dream school."),
     ("Megan Hauck", "Our daughter, who is currently in her junior year of high school, has been working with Aaron to prepare for college. Aaron has been so knowledgeable throughout this whole process, from prepping for college applications to narrowing her search for a college that fits all her (and our family’s) needs. Throughout this process we have been comfortable and confident that we will find the perfect fit! I would highly recommend Pathfinders!"),
     ("Becky J", "Our family started working with Aaron Green at Pathfinders in my son's sophomore year and it has been a valuable experience. He worked closely with our son to help him identify the career path for him and then went through a very thorough process of researching schools and setting him up for success with applications. Aaron's guidance through the entire process has made it much less stressful for us as parents and for my son as the student. My son has committed to his college of choice and feels confident about that. I highly recommend Aaron and the Pathfinder team!!"),
     ("Mitch Artist", "Fantastic service! They helped my son save thousands on college, and fully understand his future."),
     ("Shannon Hutson", "The Pathfinders Team made a big difference for our daughter, and for our whole family. They helped us think clearly about her future wants and guided us through the steps she needed to get there. Their career readiness process was incredibly valuable and gave us real confidence in the decisions she was making along the way. I highly recommend for any high schooler!"),
     ("Kaleigh Eckler", "Aaron really helped us think about degrees differently and consider what our son really wants to do. He showed us how that relates to the right college. I recommend having a family call!"),
-    ("Amy Wisdom", "Such knowledgeable experts leading the way on the important and sometimes complicated journey of figuring out which college will be a good fit - highly recommended!!"),
 ]
 
 QUOTES = {
@@ -163,17 +161,17 @@ FAQS = [
      ["That may have been true 20 years ago. Today, changing majors, transferring schools or extending graduation can significantly increase costs and delay financial independence.",
       "Starting with career clarity helps students make more informed decisions from the beginning."]),
     ("Is this only for students applying to elite colleges?",
-     ["No. The process begins with career discovery and then identifies the best educational pathway, which may be a four-year university, community college, trade school, apprenticeship, military service or another option."]),
+     ["No. Students attending all types of colleges deserve clarity, not just students attending elite colleges. The process begins with career discovery and then identifies the best educational pathway, which may be a four-year university, community college, trade school, apprenticeship, military service or another option."]),
     ("Will my teenager actually engage?",
      ["Yes. Students work directly with experienced advisors who help them take ownership of the process, which often reduces parent-child tension."]),
     ("Is it worth the investment?",
      ["The cost of expert guidance is small compared with the financial impact of choosing the wrong educational path or taking on unnecessary student debt.",
       "Families who work with us save about $56,000 on average through scholarship strategies, four-year graduation planning, internships and co-op opportunities."]),
     ("When should our family start?",
-     ["Many families begin in 9th or 10th grade, so there is time for career discovery before applications. Most reach out when sophomore or junior year begins and the timeline suddenly feels real, and that is still a great time to start.",
-      "Seniors can still get help with the college list, essays, applications, financial aid and choosing between offers."]),
+     ["It's never too late. Many families start in 9th or 10th grade, so there is time for career discovery before applications. Most reach out when sophomore or junior year begins and the timeline suddenly feels real, and that is still a great time to start.",
+      "Seniors can still get help with their college list and essays, as well as applications, financial aid and choosing between offers. We also work with students who are already in college or considering an advanced degree."]),
     ("What happens on the complimentary family strategy call?",
-     ["We meet your family where you are in the college and career journey. We learn about your student's interests, strengths and goals, point out common blind spots that derail many students, and answer the big question: what should we do next?"]),
+     ["We meet your family where you are in the college and career journey. Our focus is a conversation with your student, where we learn about their interests, strengths, and goals, point out common blind spots that derail many students, and answer the big question: What should we do next? Most families leave that conversation having learned more about their student's career thoughts than they knew before the call."]),
     ("Do you work with families outside your area?",
      ["Yes. Coaching, the online College & Career Planning Course and our workshops are all virtual, so we work with families across the United States."]),
 ]
@@ -342,13 +340,20 @@ def r_workshops(arg, ctx):
     return '<div><div class="event-list">' + "".join(rows) + "</div>" + empty + "</div>"
 
 
-def r_guides(_arg, ctx):
+def r_guides(arg, ctx):
     cards = []
     for title, img, blurb in GUIDES:
-        cards.append(f'<article class="guide-card reveal"><img src="{img}" alt="{e(title)} preview" loading="lazy" width="600" height="340">'
+        pic = "" if arg == "noimage" else f'<img src="{img}" alt="{e(title)} preview" loading="lazy" width="600" height="340">'
+        cards.append(f'<article class="guide-card reveal">{pic}'
                      f'<div class="body"><span class="tag">Free download</span><h3>{e(title)}</h3><p class="muted" style="margin:8px 0 0;font-size:.98rem">{e(blurb)}</p></div></article>')
     return '<div class="grid-2">' + "".join(cards) + "</div>"
 
+
+# Where each form posts its data (multipart FormData). Leave empty until the CRM
+# webhook exists; an empty endpoint keeps the "not connected yet" review message.
+FORM_ENDPOINTS = {"contact": "", "resource": "", "educator": "", "planner": ""}
+FORM_NAMES = {"contact": "Website contact", "resource": "Free resource request",
+              "educator": "Educator inquiry", "planner": "Financial planner inquiry"}
 
 CONSENT = "By submitting this form, I agree to receive email communications from Pathfinders College &amp; Career Advisors related to my inquiry."
 
@@ -379,6 +384,8 @@ def r_form(kind, ctx):
                   field("phone", "Phone number", "tel", auto="tel"),
                   field("organization", "Organization" if kind == "educator" else "Firm / organization", auto="organization"),
                   field("zip", "ZIP code", auto="postal-code")]
+        if kind == "educator":
+            fields.append(field("support_needed", "What resources or support can we provide to your school?", full=True, rows=4))
         title = "Give every student your guidance and support." if kind == "educator" else "Provide your clients with something they can’t get anywhere else."
         sub = "Tell us a little about your school or district and we’ll be in touch." if kind == "educator" else "Tell us about your practice and we’ll show you how a partnership works."
         btn, success = "Get in touch", "Thank you. Our team will contact you shortly."
@@ -406,8 +413,12 @@ def r_form(kind, ctx):
                '<div class="full consent"><label><input type="checkbox" name="sms_marketing" value="yes"> I agree to receive marketing text messages from Pathfinders College &amp; Career Advisors LLC regarding educational resources, events, programs, services and promotions. Message frequency may vary. Message and data rates may apply. Reply HELP for help or STOP to opt out.</label></div>'
                f'<p class="full consent" style="margin:0">SMS consent is optional and is not a condition of purchasing or receiving services. See our <a href="{SITE}/privacy-policy/">Privacy Policy</a> and <a href="{SITE}/terms-of-service/">Terms of Service</a>.</p>')
     body = "".join(fields)
-    html_out = (f'<form class="form-panel" data-pf-form="{kind}" data-success="{e(success)}" novalidate>'
-                f'<h3>{title}</h3><p>{sub}</p><div class="form-grid">{body}'
+    endpoint = FORM_ENDPOINTS.get(kind, "")
+    ep_attr = f' data-endpoint="{e(endpoint)}"' if endpoint else ""
+    hidden = (f'<input type="hidden" name="form_name" value="{e(FORM_NAMES[kind])}">'
+              f'<input type="hidden" name="page_path" value="{e(ctx["page"]["path"])}">')
+    html_out = (f'<form class="form-panel" data-pf-form="{kind}" data-success="{e(success)}"{ep_attr} novalidate>'
+                f'{hidden}<h3>{title}</h3><p>{sub}</p><div class="form-grid">{body}'
                 f'<div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>'
                 f'{sms}<p class="full consent" style="margin:0">{CONSENT}</p>'
                 f'<div class="full"><button class="btn btn-block" type="submit">{btn}</button></div></div>'
@@ -416,31 +427,35 @@ def r_form(kind, ctx):
 
 
 CTA_COPY = {
-    "home": ("Build a plan first", "Don’t spend $400,000 hoping it works out.",
+    "home": ("Build a plan first", "Don’t spend $400,000. There’s a Return on Education.",
              "Pathfinders isn’t traditional college counseling. We help students discover who they want to become, identify the educational pathway that supports those goals, and build a financial strategy that maximizes Return on Education (ROE)."),
     "planners": ("For advisors who lead with advice", "Make education one of your clients’ smartest investments.",
                  "You’ve helped your clients accumulate wealth. We help ensure one of their largest planned expenditures is aligned with career outcomes, family values and long-term financial goals."),
     "": ("Ready? We are too.", "Put your student in the driver’s seat.",
          "We get it. Choosing the right college with your student can be daunting. Let us help you put them in the driver’s seat and take the stress off of you."),
 }
+CTA_COPY["educators"] = CTA_COPY[""]
+CTA_BUTTON = {"educators": "Schedule time with an expert to learn how we can support your school"}
 
 
 def r_cta(arg, ctx):
     root = ctx["root"]
     eyebrow, head, para = CTA_COPY.get(arg or "", CTA_COPY[""])
+    label = CTA_BUTTON.get(arg or "", "Book a free strategy call")
     return (f'<section class="section-tight"><div class="container"><div class="cta-band reveal">{ROUTE_SVG}'
             f'<div><span class="eyebrow">{eyebrow}</span><h2>{head}</h2>'
             f'<p>{para}</p></div>'
-            f'<div class="btn-row"><a class="btn" href="{root}contact-us/#book">Book a free strategy call {icon("arrow")}</a></div></div></div></section>')
+            f'<div class="btn-row"><a class="btn" href="{root}contact-us/#book">{label} {icon("arrow")}</a></div></div></div></section>')
 
 
 def r_video(arg, ctx):
-    caption = {"home": "See how our Career-First approach works for families like yours.",
-               "about": "Meet the Pathfinders team and hear from families who found their path.",
+    caption = {"about": "Meet the Pathfinders team and hear from families who found their path.",
                "workshop": "Watch this 2-minute overview before you reserve your seat."}.get(arg, "")
+    headline = ("See how the Career First approach works for families like yours" if arg == "home"
+                else "See how Pathfinders has helped families like yours")
     return (f'<figure class="video-card"><video controls preload="metadata" playsinline src="{VIDEO_URL}#t=0.8" '
             f'aria-label="See how Pathfinders has helped families like yours"></video>'
-            f'<figcaption><span class="video-badge" aria-hidden="true">{icon("play")}</span><span><strong>See how Pathfinders has helped families like yours</strong>{e(caption)}</span></figcaption></figure>')
+            f'<figcaption><span class="video-badge" aria-hidden="true">{icon("play")}</span><span><strong>{headline}</strong>{e(caption)}</span></figcaption></figure>')
 
 
 RENDERERS = {
@@ -632,7 +647,7 @@ def footer(root):
     soc = "".join(f'<a href="{u}" target="_blank" rel="noopener" aria-label="Pathfinders on {k.capitalize() if k != "youtube" else "YouTube"}"><svg viewBox="0 0 24 24" aria-hidden="true">{SOCIAL_ICONS[k]}</svg></a>' for k, u in SOCIAL.items())
     return (f'<footer class="site-footer"><div class="container"><div class="footer-grid">'
             f'<div class="footer-brand"><img src="{LOGO_600}" width="600" height="126" alt="Pathfinders College &amp; Career Advisors" loading="lazy">'
-            f'<p class="tagline">Career First. College Second.</p><p>Education investment advisors helping families across the United States plan the right career, college and funding path since 2009.</p>'
+            f'<p class="tagline">Career First. College Second.</p><p>Education investment advisors helping families across the United States plan the right career, college and funding path since 2009.</p><p>Join the Career First College Second movement.</p>'
             f'<div class="socials">{soc}</div></div>'
             f'<div><h2>Who we help</h2><ul><li><a href="{root}">Families &amp; students</a></li><li><a href="{root}educators/">School counselors &amp; educators</a></li><li><a href="{root}financial-planners/">Financial planners</a></li></ul></div>'
             f'<div><h2>Learn</h2><ul><li><a href="{root}workshops/">Free workshops</a></li><li><a href="{root}resources/">Knowledge base</a></li><li><a href="{root}#free-guides">Free guides</a></li><li><a href="{SITE}/log-in/">Course login</a></li></ul></div>'
@@ -687,6 +702,20 @@ def layout(p, body, root):
 """
 
 
+# Trademark mark after every visible "Return on Education" and "ROE". Only text
+# between tags is touched, so attributes, schema and meta stay plain. Swap the
+# <sup> for the approved trademark graphic here once it arrives.
+TM = '<sup class="tm">&trade;</sup>'
+ROE_TEXT = re.compile(r"\b(Return on Education|ROE)\b")
+
+
+def mark_roe(markup):
+    parts = re.split(r"(<[^>]+>)", markup)
+    for i in range(0, len(parts), 2):
+        parts[i] = ROE_TEXT.sub(lambda m: m.group(1) + TM, parts[i])
+    return "".join(parts)
+
+
 TOKEN = re.compile(r"\{\{([A-Z_]+)(?::([^}]*))?\}\}")
 
 
@@ -713,7 +742,7 @@ def render_body(text, ctx):
             return RENDERERS[name](arg, ctx)
         raise KeyError(f"Unknown token {name}")
     out = TOKEN.sub(rep, text)
-    return TOKEN.sub(rep, out)  # second pass for tokens produced by renderers
+    return mark_roe(TOKEN.sub(rep, out))  # second pass for tokens produced by renderers
 
 
 def build():

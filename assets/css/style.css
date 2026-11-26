@@ -71,6 +71,8 @@ h3 { font-size: clamp(1.12rem, 1.5vw, 1.3rem); font-weight: 500; }
 h4 { font-size: 1.05rem; font-weight: 500; }
 em { font-style: normal; font-weight: 500; }
 strong, b { font-weight: 600; }
+/* Return on Education trademark mark (build.py mark_roe) */
+.tm { font-size: .5em; vertical-align: super; line-height: 0; margin-left: .05em; font-weight: 400; }
 :focus-visible { outline: 3px solid var(--orange-soft); outline-offset: 3px; border-radius: 6px; }
 ::selection { background: var(--orange-50); color: var(--navy-900); }
 
@@ -100,11 +102,6 @@ strong, b { font-weight: 600; }
   font-family: var(--font-head); font-size: .78rem; font-weight: 700;
   letter-spacing: .14em; text-transform: uppercase; color: var(--orange);
   margin-bottom: 14px;
-}
-.eyebrow::before {
-  content: ""; width: 28px; height: 2px;
-  background-image: linear-gradient(90deg, currentColor 50%, transparent 50%);
-  background-size: 8px 2px;
 }
 .bg-navy .eyebrow, .hero .eyebrow, .cta-band .eyebrow { color: var(--orange-soft); }
 .lead { font-size: clamp(1.1rem, 1.6vw, 1.3rem); line-height: 1.55; color: var(--muted); }

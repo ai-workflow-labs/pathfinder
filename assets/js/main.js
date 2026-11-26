@@ -167,16 +167,20 @@
       var hp = form.querySelector(".hp input");
       if (hp && hp.value) return;
       var endpoint = form.getAttribute("data-endpoint");
-      var done = function (msg) {
+      var submit = form.querySelector("button[type=submit]");
+      var done = function (msg, clear) {
         if (status) { status.textContent = msg; status.classList.add("is-visible"); }
-        form.querySelectorAll("input:not([type=checkbox]), textarea, select").forEach(function (f) { if (!f.closest(".hp")) f.value = ""; });
+        if (submit) submit.disabled = false;
+        if (clear) form.querySelectorAll("input:not([type=checkbox]):not([type=hidden]), textarea, select").forEach(function (f) { if (!f.closest(".hp")) f.value = ""; });
       };
       if (endpoint) {
+        if (submit) submit.disabled = true;
+        if (status) { status.textContent = "Sending..."; status.classList.add("is-visible"); }
         fetch(endpoint, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } })
-          .then(function (r) { done(r.ok ? form.getAttribute("data-success") : "Something went wrong. Please try again or book a call."); })
-          .catch(function () { done("Something went wrong. Please try again or book a call."); });
+          .then(function (r) { r.ok ? done(form.getAttribute("data-success"), true) : done("Something went wrong. Please try again or book a call.", false); })
+          .catch(function () { done("Something went wrong. Please try again or book a call.", false); });
       } else {
-        done(form.getAttribute("data-success") + " (Review build: this form is not connected yet.)");
+        done(form.getAttribute("data-success") + " (Review build: this form is not connected yet.)", true);
       }
     });
   });
