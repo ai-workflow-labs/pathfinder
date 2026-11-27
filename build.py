@@ -182,6 +182,8 @@ FP_FAQS = [
 ]
 
 # --------------------------------------------------------------------------- page config
+POST_PAGES = json.loads((ROOT_DIR / "src" / "data" / "post_pages.json").read_text(encoding="utf-8"))
+CATEGORY_PAGES = json.loads((ROOT_DIR / "src" / "data" / "categories.json").read_text(encoding="utf-8"))
 LOCATIONS = json.loads((ROOT_DIR / "src" / "data" / "locations.json").read_text(encoding="utf-8"))
 
 PAGES = [
@@ -275,6 +277,15 @@ PAGES = [
          title=c["title"], desc=c["desc"], og=c["og"], name=c["h1"])
     for c in LOCATIONS["cities"]
 ] + [
+    dict(src="post", post=x, out=x["slug"] + "/index.html", path=x["path"], nav="resources",
+         title=x.get("meta_title") or x["title"], desc=x.get("desc", ""), og=x.get("og") or LOGO_STACK, name=x["title"],
+         noindex="noindex" in x.get("robots", ""), canonical=False if not x.get("canonical") else None)
+    for x in POST_PAGES
+] + [
+    dict(src="category", cat=c, out=c["path"].strip("/") + "/index.html", path=c["path"], nav="resources",
+         title=c["meta_title"], desc=c["desc"], og=c.get("og") or LOGO_STACK, name=c["name"])
+    for c in CATEGORY_PAGES
+] + [
     dict(src="404.html", out="404.html", path="/404/", nav="", title="Page not found | Pathfinders Advisors",
          desc="This page could not be found.", og=LOGO_STACK, name="Not found", noindex=True),
 ]
@@ -362,7 +373,7 @@ def post_card(a, root, searchable=True):
     if searchable:
         hay = " ".join([title, excerpt, " ".join(cats), " ".join(ARTICLE_KEYWORDS.get(slug, []))]).lower()
         attrs = f' data-cats="{e("|".join(cats))}" data-search="{e(hay)}"'
-    return (f'<a class="post-card reveal" href="{article_url(slug)}"{attrs}>'
+    return (f'<a class="post-card reveal" href="{link("/" + slug + "/", root)}"{attrs}>'
             f'<div class="thumb{fit}"><img src="{e(img)}" alt="{e(alt)}" loading="lazy" width="768" height="480"></div>'
             f'<div class="body"><div class="post-meta"><span class="tag">{e(tag)}</span><time datetime="{date}">{fmt_date(d)}</time></div>'
             f'<h3>{e(title)}</h3><p>{e(excerpt)}</p><span class="text-link">Read article</span></div></a>')
@@ -676,6 +687,82 @@ def stats_html(stats, heading=True):
     return f'<div class="city-stats reveal">{h}<div class="stats" role="list">{cells}</div></div>'
 
 
+LIVE_LINK = re.compile(r'href="(?:https?://(?:www\.)?pathfindersadvisors\.com)?(/[^"#?]*)?([#?][^"]*)?"')
+
+
+def local_links(body, root):
+    """Point links to the old domain (or root-relative ones) at pages this site builds."""
+    def fix(m):
+        path, rest = m.group(1) or "/", m.group(2) or ""
+        if not m.group(0).startswith('href="http') and not m.group(0).startswith('href="/'):
+            return m.group(0)
+        if not path.endswith("/") and "." not in path.rsplit("/", 1)[-1]:
+            path += "/"
+        return f'href="{link(path, root)}{rest}"' if path in BUILT_PATHS else m.group(0)
+    return LIVE_LINK.sub(fix, body)
+
+
+def add_heading_ids(body):
+    """id on every h2 so the table of contents can link to it."""
+    toc, used = [], set()
+    def tag(m):
+        text = re.sub(r"<[^>]+>", "", m.group(2))
+        slug = re.sub(r"[^a-z0-9]+", "-", html.unescape(text).lower()).strip("-")[:60] or "section"
+        while slug in used:
+            slug += "-2"
+        used.add(slug)
+        toc.append((slug, text))
+        return f'<h2{m.group(1)} id="{slug}">{m.group(2)}</h2>'
+    return re.sub(r"<h2([^>]*)>(.*?)</h2>", tag, body, flags=re.S), toc
+
+
+def post_body(x, root):
+    cats = x.get("categories") or []
+    cat_links = " ".join(f'<a class="tag" href="{link("/category/" + c["slug"] + "/", root)}">{e(c["name"])}</a>' for c in cats)
+    d = dt.date.fromisoformat(x["date"])
+    who = f' &middot; By {e(x["author"])}' if x.get("author") else ""
+    body, toc = add_heading_ids(local_links(x["body"], root))
+    toc_html = ""
+    if len(toc) >= 3:
+        toc_html = ('<nav class="post-toc" aria-label="Table of contents"><h2>Table of Contents</h2><ol>'
+                    + "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in toc) + "</ol></nav>")
+    img = x.get("og") or ""
+    hero_img = ""
+    if img and "Pathfinders_stack_RGB" not in img and "logo" not in img.lower():
+        hero_img = f'<figure class="post-hero-img"><img src="{e(img)}" alt="{e(x.get("og_alt") or x["title"])}" width="1200" height="800"></figure>'
+    tags = "".join(f'<li>{e(t)}</li>' for t in x.get("tags", []))
+    tags_html = f'<div class="post-tags"><h2>Topics</h2><ul>{tags}</ul></div>' if tags else ""
+    mine = {c["slug"] for c in cats} - {"blog", "high-school"} or {c["slug"] for c in cats}
+    related = [y for y in POST_PAGES if y["slug"] != x["slug"] and mine & {c["slug"] for c in y.get("categories") or []}][:3]
+    if len(related) < 3:
+        related += [y for y in POST_PAGES if y["slug"] != x["slug"] and y not in related][:3 - len(related)]
+    by_slug = {a[1]: a for a in ARTICLES}
+    rel = "".join(post_card(by_slug[y["slug"]], root, searchable=False) for y in related if y["slug"] in by_slug)
+    title = x.get("h1") or x["title"]
+    empty = "" if x["body"].strip() else '<p class="muted">This post has no written content yet. Browse related articles below, or <a href="' + root + 'contact-us/#book">book a free strategy call</a>.</p>'
+    return (f'<section class="page-hero post-hero">{ROUTE_SVG}<div class="container container-narrow">'
+            f'<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{root}">Home</a></li><li><a href="{root}resources/">Knowledge Base</a></li><li aria-current="page">{e(x["title"])}</li></ol></nav>'
+            f'<div class="post-cats">{cat_links}</div><h1>{e(title)}</h1>'
+            f'<p class="post-byline"><time datetime="{x["date"]}">{fmt_date(d)}</time>{who}</p></div></section>'
+            f'<article class="section post"><div class="container container-narrow">{hero_img}{toc_html}'
+            f'<div class="prose post-body">{body}{empty}</div>{tags_html}</div></article>'
+            f'<section class="section bg-cream"><div class="container"><div class="section-head reveal"><span class="eyebrow">Keep reading</span><h2>Related articles</h2></div>'
+            f'<div class="grid-3 cards-wrap">{rel}</div></div></section>'
+            "{{CTA}}")
+
+
+def category_body(c, root):
+    items = [a for a in ARTICLES if c["slug"] in {k["slug"] for k in next((y.get("categories") or [] for y in POST_PAGES if y["slug"] == a[1]), [])}]
+    cards = "".join(post_card(a, root) for a in items)
+    desc = f'<p class="lead">{e(c["description"])}</p>' if c.get("description") else ""
+    return (f'<section class="page-hero">{ROUTE_SVG}<div class="container">'
+            f'<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{root}">Home</a></li><li><a href="{root}resources/">Knowledge Base</a></li><li aria-current="page">{e(c["name"])}</li></ol></nav>'
+            f'<span class="eyebrow">Category</span><h1>{e(c["name"])}</h1>{desc}'
+            f'<p class="hero-note">{len(items)} article{"s" if len(items) != 1 else ""}</p></div></section>'
+            f'<section class="section"><div class="container"><div class="grid-3 cards-wrap">{cards}</div></div></section>'
+            "{{CTA}}")
+
+
 RENDERERS = {
     "REVIEWS": r_reviews, "QUOTE": r_quote, "QUOTECARDS": r_quotecards, "ARTICLES": r_articles,
     "FILTERS": r_filters, "FAQ": r_faq, "WORKSHOPS": r_workshops, "GUIDES": r_guides, "FORM": r_form,
@@ -836,6 +923,17 @@ def schema_for(p):
         page = webpage_node(p, "ProfilePage")
         page["mainEntity"] = {"@id": SITE + "/about/#" + pid}
         g += [page, breadcrumb_node(p), person(pid, pname, None, p["desc"], p["og"])]
+    elif key == "post":
+        x = p["post"]
+        g += [webpage_node(p), breadcrumb_node(p), {
+            "@type": "BlogPosting", "@id": SITE + p["path"] + "#article", "headline": x["title"],
+            "description": p["desc"], "image": p["og"], "datePublished": x.get("published") or x["date"],
+            "dateModified": x.get("modified_time") or x.get("published") or x["date"],
+            "author": {"@type": "Person", "name": x.get("author") or ORG_NAME},
+            "publisher": {"@id": SITE + "/#organization"}, "mainEntityOfPage": {"@id": SITE + p["path"] + "#webpage"},
+            "articleSection": x.get("section") or "", "keywords": ", ".join(x.get("tags", [])), "inLanguage": "en-US"}]
+    elif key == "category":
+        g += [webpage_node(p, "CollectionPage"), breadcrumb_node(p)]
     elif key != "404.html":
         g += [webpage_node(p), breadcrumb_node(p)]
     else:
@@ -962,6 +1060,27 @@ def mark_roe(markup):
     return "".join(parts)
 
 
+UPLOAD_ATTR = re.compile(r'((?:src|srcset|href|poster)=")' + re.escape(WP) + r'([^"]*)"')
+
+
+def local_uploads(page, root):
+    """Serve uploads this repo holds from its own wp-content/ (same paths as the old site).
+    Meta tags and structured data keep the absolute URL, which stays valid on the live domain."""
+    def fix(m):
+        path = m.group(2).split("#")[0].split("?")[0]
+        if (ROOT_DIR / "wp-content" / "uploads" / path).exists():
+            return f'{m.group(1)}{root}wp-content/uploads/{m.group(2)}"'
+        return m.group(0)
+    page = UPLOAD_ATTR.sub(fix, page)
+
+    def fix_set(m):  # every candidate inside a srcset
+        def one(c):
+            path = c.group(1)
+            return f"{root}wp-content/uploads/{path}" if (ROOT_DIR / "wp-content" / "uploads" / path).exists() else c.group(0)
+        return 'srcset="' + re.sub(re.escape(WP) + r"([^\s,\"]+)", one, m.group(1)) + '"'
+    return re.sub(r'srcset="([^"]*)"', fix_set, page)
+
+
 TOKEN = re.compile(r"\{\{([A-Z_]+)(?::([^}]*))?\}\}")
 
 
@@ -996,16 +1115,25 @@ def build():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
     shutil.copytree(ROOT_DIR / "assets", OUT / "assets")
+    if (ROOT_DIR / "wp-content").exists():  # uploads copied from the old site (tools/fetch_uploads.py)
+        shutil.copytree(ROOT_DIR / "wp-content", OUT / "wp-content")
     for p in PAGES:
         depth = p["out"].count("/")
         root = "../" * depth if depth else "./"
         if p["src"] == "404.html":
             root = "/"  # 404 is served at any depth, so its links must be absolute
-        text = city_body(p["city"], root) if p["src"] == "city" else (SRC / p["src"]).read_text(encoding="utf-8")
+        if p["src"] == "city":
+            text = city_body(p["city"], root)
+        elif p["src"] == "post":
+            text = post_body(p["post"], root)
+        elif p["src"] == "category":
+            text = category_body(p["cat"], root)
+        else:
+            text = (SRC / p["src"]).read_text(encoding="utf-8")
         body = render_body(text, {"root": root, "page": p})
         dest = OUT / p["out"]
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(layout(p, body, root), encoding="utf-8")
+        dest.write_text(local_uploads(layout(p, body, root), root), encoding="utf-8")
         print("built", p["out"])
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     robots = "User-agent: *\nDisallow: /\n" if not LIVE else f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n"
