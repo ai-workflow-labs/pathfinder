@@ -726,3 +726,18 @@ strong, b { font-weight: 600; }
 .cta-band .cta-question { margin-top: 10px; font-family: var(--font-head); font-weight: 600; color: var(--orange-soft); font-size: 1.3rem; }
 .cta-band p + p { margin-top: 10px; }
 .kb-more { display: flex; width: fit-content; margin: 32px auto 0; }
+
+/* ---------- Team profiles, legal, sitemap, testimonials ---------- */
+.profile-aside { display: grid; gap: 22px; justify-items: center; }
+.profile-photo { width: min(420px, 100%); aspect-ratio: 1 / 1; border-radius: 50%; overflow: hidden; background: var(--navy); box-shadow: var(--shadow); }
+.profile-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.testimonial-photo { width: min(440px, 100%); margin: 0 auto; }
+.card-title { font-size: clamp(1.12rem, 1.5vw, 1.3rem); font-weight: 500; }
+.legal h2 { font-size: clamp(1.3rem, 2.2vw, 1.7rem); margin-top: 1.6em; }
+.legal ul { display: grid; gap: 8px; margin-bottom: 1.4em; }
+.sitemap-group + .sitemap-group { margin-top: clamp(36px, 5vw, 56px); }
+.sitemap-group h2 { font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin-bottom: 18px; }
+.sitemap-list { columns: 2 320px; column-gap: 40px; list-style: none; padding: 0; margin: 0; }
+.sitemap-list li { break-inside: avoid; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.sitemap-list a { text-decoration: none; }
+.sitemap-list a:hover { text-decoration: underline; }

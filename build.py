@@ -211,9 +211,57 @@ PAGES = [
          title="Contact Pathfinders Advisors: Start Your College Planning Journey",
          desc="Get in touch with Pathfinders Advisors for expert guidance. Visit our contact page to connect with our team today and start your journey to success.",
          og=WP + "2026/10/pf-advising-session-qr.png", name="Contact"),
+    dict(src="faq.html", out="faq/index.html", path="/faq/", nav="",
+         title="Frequently Asked Questions - Pathfinders Advisors",
+         desc="Get answers to common questions about college consulting costs, the admissions process, career planning, and how Pathfinders Advisors supports families.",
+         og=LOGO_STACK, name="Frequently Asked Questions"),
+    dict(src="testimonials.html", out="testimonials/index.html", path="/testimonials/", nav="",
+         title="Testimonials - Pathfinders Advisors",
+         desc="Read real stories from families who worked with Pathfinders Advisors to navigate college admissions, save on tuition, and secure scholarships.",
+         og=WP + "2020/11/female-student-1.png", name="Testimonials"),
+    dict(src="services.html", out="services/index.html", path="/services/", nav="",
+         title="Services - Pathfinders Advisors",
+         desc="Navigate financial complexities with Pathfinder Advisors. Our services empower families with informed financial planning. Learn more today.",
+         og=LOGO_STACK, name="Services"),
+    dict(src="html-sitemap.html", out="html-sitemap/index.html", path="/html-sitemap/", nav="",
+         title="HTML Sitemap - Pathfinders Advisors",
+         desc="Testimonials Shop Activate Rightwaywebinar Services Members Terms Of Service Login My Profile College Planning Essentials Sat Act Quick Reference Guide",
+         og=LOGO_STACK, name="HTML Sitemap"),
+    dict(src="privacy-policy.html", out="privacy-policy/index.html", path="/privacy-policy/", nav="",
+         title="Privacy Policy - Pathfinders Advisors",
+         desc="Learn how Pathfinders Advisors collects, uses, and protects your personal information. Our commitment to privacy and data security is outlined here.",
+         og=LOGO_STACK, name="Privacy Policy"),
+    dict(src="terms-of-service.html", out="terms-of-service/index.html", path="/terms-of-service/", nav="",
+         title="Terms of Service - Pathfinders Advisors",
+         desc="Explore Pathfinders Advisors' Terms of Service to understand how we protect your interests. Gain clarity and discover how we prioritize your financial journey today.",
+         og=LOGO_STACK, name="Terms of Service"),
+    dict(src="susan-cornish.html", out="susan-cornish/index.html", path="/susan-cornish/", nav="about",
+         title="About Susan Cornish - College and Career Planning Experts",
+         desc="Susan Cornish brings 19 years of corporate experience and over 15 years as an entrepreneur to guide students and families through college planning, career exploration, and finding the right path forward.",
+         og=WP + "2025/04/image2.png", name="Susan Cornish", person=("susan-cornish", "Susan Cornish")),
+    dict(src="aly-foster.html", out="aly-foster/index.html", path="/aly-foster/", nav="about",
+         title="About Aly Foster - College and Career Planning Experts",
+         desc="Aly Foster brings a decade of experience helping families navigate personalized college and career planning decisions, finding the right path forward.",
+         og=WP + "2025/04/image4.png", name="Aly Foster", person=("aly-foster", "Aly Foster")),
+    dict(src="alyssa-rader.html", out="alyssa-rader/index.html", path="/alyssa-rader/", nav="about",
+         title="About Alyssa Rader \u2013 College & Career Planning Experts",
+         desc="Alyssa Rader understands how hard it can be to choose a direction when you know your strengths but aren't sure where they'll lead. After earning a degree in",
+         og=WP + "2026/11/Alyssa-Rader.webp", name="Alyssa Rader", person=("alyssa-rader", "Alyssa Rader")),
+    dict(src="amy-wisdom.html", out="amy-wisdom/index.html", path="/amy-wisdom/", nav="about",
+         title="About Amy Wisdom \u2013 College & Career Planning Experts",
+         desc="Proud mom and dedicated Realtor balancing a full house and a busy career. I\u2019m celebrating two major milestones this year: my daughter is graduating from FSU",
+         og=WP + "2026/03/Amy-Wisdom-1024x682.webp", name="Amy Wisdom", person=("amy-wisdom", "Amy Wisdom"), noindex=True, canonical=False),
     dict(src="404.html", out="404.html", path="/404/", nav="", title="Page not found | Pathfinders Advisors",
          desc="This page could not be found.", og=LOGO_STACK, name="Not found", noindex=True),
 ]
+
+BUILT_PATHS = {p["path"] for p in PAGES if p["src"] != "404.html"}
+
+
+def link(path, root):
+    """Relative link to a page this site builds, else the page on the live site."""
+    return root + path.lstrip("/") if path in BUILT_PATHS else SITE + path
+
 
 NAV = [
     ("home", "Families", ""),
@@ -321,7 +369,8 @@ def r_filters(_arg, ctx):
 
 def r_faq(arg, ctx):
     items = []
-    for i, (q, answer) in enumerate(FP_FAQS if arg == "planners" else FAQS):
+    faqs = FP_FAQS if arg == "planners" else ([(x["q"], x["a"]) for x in FAQ_PAGE] if arg == "page" else FAQS)
+    for i, (q, answer) in enumerate(faqs):
         body = "".join(f"<p>{e(p)}</p>" for p in answer)
         items.append(f'<details{" open" if i == 0 else ""}><summary>{e(q)}</summary><div class="answer">{body}</div></details>')
     return '<div class="faq">' + "".join(items) + "</div>"
@@ -352,9 +401,9 @@ def r_guides(arg, ctx):
 
 # Where each form posts its data (multipart FormData). Leave empty until the CRM
 # webhook exists; an empty endpoint keeps the "not connected yet" review message.
-FORM_ENDPOINTS = {"contact": "", "resource": "", "educator": "", "planner": ""}
+FORM_ENDPOINTS = {"contact": "", "resource": "", "educator": "", "planner": "", "profile": ""}
 FORM_NAMES = {"contact": "Website contact", "resource": "Free resource request",
-              "educator": "Educator inquiry", "planner": "Financial planner inquiry"}
+              "educator": "Educator inquiry", "planner": "Financial planner inquiry", "profile": "Team profile inquiry"}
 
 CONSENT = "By submitting this form, I agree to receive email communications from Pathfinders College &amp; Career Advisors related to my inquiry."
 
@@ -398,6 +447,15 @@ def r_form(kind, ctx):
                   field("resource", "Which resource would you like?", required=True, options=[g[0] for g in GUIDES])]
         title, sub = "Send me the free guide", "We’ll email the PDF to you right away."
         btn, success = "Send me the resource", "Thank you. Check your inbox for your guide."
+    elif kind == "profile":
+        fields = [field("full_name", "Full name", required=True, full=True, auto="name"),
+                  field("phone", "Phone number", "tel", auto="tel"),
+                  field("email", "Email", "email", True, auto="email"),
+                  field("student_name", "Student&rsquo;s name"),
+                  field("grad_year", "Graduation year", options=GRAD_YEARS),
+                  field("referral", "Who can we thank for your interest in our services?", full=True)]
+        title, sub = "Get in touch for all the support you need on your path to a bright future.", "Tell us about your student and we&rsquo;ll be in touch."
+        btn, success = "Send", "Thank you. A member of our team will reply soon."
     else:  # contact
         fields = [field("first_name", "First name", required=True, auto="given-name"),
                   field("last_name", "Last name", required=True, auto="family-name"),
@@ -412,7 +470,7 @@ def r_form(kind, ctx):
     if kind == "contact":
         sms = ('<div class="full consent"><label><input type="checkbox" name="sms_service" value="yes"> I agree to receive non-marketing text messages from Pathfinders College &amp; Career Advisors LLC regarding appointments, scheduling, advising services and other communications related to services I have requested. Message frequency may vary. Message and data rates may apply. Reply HELP for help or STOP to opt out.</label></div>'
                '<div class="full consent"><label><input type="checkbox" name="sms_marketing" value="yes"> I agree to receive marketing text messages from Pathfinders College &amp; Career Advisors LLC regarding educational resources, events, programs, services and promotions. Message frequency may vary. Message and data rates may apply. Reply HELP for help or STOP to opt out.</label></div>'
-               f'<p class="full consent" style="margin:0">SMS consent is optional and is not a condition of purchasing or receiving services. See our <a href="{SITE}/privacy-policy/">Privacy Policy</a> and <a href="{SITE}/terms-of-service/">Terms of Service</a>.</p>')
+               f'<p class="full consent" style="margin:0">SMS consent is optional and is not a condition of purchasing or receiving services. See our <a href="{link("/privacy-policy/", ctx["root"])}">Privacy Policy</a> and <a href="{link("/terms-of-service/", ctx["root"])}">Terms of Service</a>.</p>')
     body = "".join(fields)
     endpoint = FORM_ENDPOINTS.get(kind, "")
     ep_attr = f' data-endpoint="{e(endpoint)}"' if endpoint else ""
@@ -459,10 +517,46 @@ def r_video(arg, ctx):
             f'<figcaption><span class="video-badge" aria-hidden="true">{icon("play")}</span><span><strong>{headline}</strong>{e(caption)}</span></figcaption></figure>')
 
 
+TESTIMONIALS = json.loads((ROOT_DIR / "src" / "data" / "testimonials.json").read_text(encoding="utf-8"))
+FAQ_PAGE = json.loads((ROOT_DIR / "src" / "data" / "faq_page.json").read_text(encoding="utf-8"))
+OLD_SITEMAP = json.loads((ROOT_DIR / "src" / "data" / "old_sitemap.json").read_text(encoding="utf-8"))
+SITE_PAGES = json.loads((ROOT_DIR / "src" / "data" / "site_pages.json").read_text(encoding="utf-8"))
+
+
+def r_testimonials(_arg, ctx):
+    cards = []
+    for t in TESTIMONIALS:
+        meta = f'<div class="review-source">{e(t["meta"])}</div>' if t.get("meta") else ""
+        cards.append(f'<figure class="review reveal"><blockquote style="margin:0"><p>{e(t["text"])}</p></blockquote>'
+                     f'<figcaption class="review-head" style="margin:16px 0 0"><span class="avatar" aria-hidden="true">{e(initials(t["name"]))}</span>'
+                     f'<div><div class="review-name">{e(t["name"])}</div>{meta}</div></figcaption></figure>')
+    return '<div class="reviews">' + "".join(cards) + "</div>"
+
+
+def r_sitemap(_arg, ctx):
+    root = ctx["root"]
+    posts = {"/" + a[1] + "/": a[0] for a in ARTICLES}
+    names = {p["path"]: p["name"] for p in PAGES if p["src"] != "404.html"}
+    entries = {}
+    for x in OLD_SITEMAP:
+        entries.setdefault(x["path"], x["text"])
+    for x in SITE_PAGES:
+        entries.setdefault(x["path"], names.get(x["path"], x["title"]))
+    for path, name in names.items():
+        entries.setdefault(path, name)
+    for path, title in posts.items():
+        entries.setdefault(path, title)
+    page_items = sorted(((t, pth) for pth, t in entries.items() if pth not in posts), key=lambda x: x[0].lower())
+    post_items = [(entries[pth], pth) for pth in posts]
+    li = lambda items: "".join(f'<li><a href="{link(pth, root)}">{e(t)}</a></li>' for t, pth in items)
+    return (f'<div class="sitemap-group"><h2>Pages</h2><ul class="sitemap-list">{li(page_items)}</ul></div>'
+            f'<div class="sitemap-group"><h2>Blog Posts</h2><ul class="sitemap-list">{li(post_items)}</ul></div>')
+
+
 RENDERERS = {
     "REVIEWS": r_reviews, "QUOTE": r_quote, "QUOTECARDS": r_quotecards, "ARTICLES": r_articles,
     "FILTERS": r_filters, "FAQ": r_faq, "WORKSHOPS": r_workshops, "GUIDES": r_guides, "FORM": r_form,
-    "CTA": r_cta, "VIDEO": r_video,
+    "CTA": r_cta, "VIDEO": r_video, "TESTIMONIALS": r_testimonials, "SITEMAP": r_sitemap,
 }
 
 # --------------------------------------------------------------------------- schema
@@ -600,6 +694,16 @@ def schema_for(p):
                "provider": {"@id": SITE + "/#organization"}, "inLanguage": "en-US"}]
     elif key == "contact-us.html":
         g += [webpage_node(p, "ContactPage"), breadcrumb_node(p)]
+    elif key == "faq.html":
+        g += [webpage_node(p, "FAQPage"), breadcrumb_node(p)]
+        g[-2]["mainEntity"] = [{"@type": "Question", "name": x["q"], "acceptedAnswer": {"@type": "Answer", "text": " ".join(x["a"])}} for x in FAQ_PAGE]
+    elif p.get("person"):
+        pid, pname = p["person"]
+        page = webpage_node(p, "ProfilePage")
+        page["mainEntity"] = {"@id": SITE + "/about/#" + pid}
+        g += [page, breadcrumb_node(p), person(pid, pname, None, p["desc"], p["og"])]
+    elif key != "404.html":
+        g += [webpage_node(p), breadcrumb_node(p)]
     else:
         g.append(webpage_node(p))
     data = {"@context": "https://schema.org", "@graph": g}
@@ -655,13 +759,19 @@ def footer(root):
             f'<div><h2>Company</h2><ul><li><a href="{root}about/">About us</a></li><li><a href="{root}contact-us/">Contact</a></li><li><a href="{root}contact-us/#book">Book a strategy call</a></li></ul></div>'
             f'<p class="footer-line">Career First. College Second. | Education Investment Advisors</p>'
             f'</div><div class="footer-bottom"><p style="margin:0">&copy; <span data-year>{NOW.year}</span> Pathfinders College &amp; Career Advisors LLC. All rights reserved.</p>'
-            f'<nav aria-label="Legal"><a href="{SITE}/privacy-policy/">Privacy Policy</a><a href="{SITE}/terms-of-service/">Terms of Service</a></nav></div></div></footer>'
+            f'<nav aria-label="Legal"><a href="{link("/privacy-policy/", root)}">Privacy Policy</a><a href="{link("/terms-of-service/", root)}">Terms of Service</a><a href="{link("/html-sitemap/", root)}">Sitemap</a></nav></div></div></footer>'
             f'<div class="mobile-cta"><a class="btn" href="{root}contact-us/#book">Book a free strategy call</a></div>')
 
 
 def layout(p, body, root):
     canonical = SITE + p["path"] if p["src"] != "404.html" else SITE + "/"
-    robots = "noindex, nofollow" if (not LIVE or p.get("noindex")) else "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    canon_tag = "" if p.get("canonical") is False else f'<link rel="canonical" href="{canonical}">'
+    if not LIVE:
+        robots = "noindex, nofollow"
+    elif p.get("noindex"):
+        robots = "noindex, follow"  # as on the old site (amy-wisdom)
+    else:
+        robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     return f"""<!doctype html>
 <html lang="en-US" class="no-js">
 <head>
@@ -670,7 +780,7 @@ def layout(p, body, root):
 <title>{e(p["title"])}</title>
 <meta name="description" content="{e(p["desc"])}">
 <meta name="robots" content="{robots}">
-<link rel="canonical" href="{canonical}">
+{canon_tag}
 <meta property="og:locale" content="en_US">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Pathfinders Advisors">
