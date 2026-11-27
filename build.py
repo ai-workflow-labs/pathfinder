@@ -108,43 +108,35 @@ GOOGLE_REVIEWS = [
 
 QUOTES = {
     "doug": dict(name="Doug Stevens", meta="Parent, daughter accepted to The Ohio State University",
-                 text="Working with Pathfinders was a game-changer for our family, turning what could’ve been a very intimidating, time-consuming and stressful experience into an enlightening, empowering and uplifting one. Thanks to Aaron’s expertise and personalized approach, we confidently navigated the entire college admissions journey. The investment in Pathfinder’s services was absolutely worth every penny."),
-    "devita": dict(name="Devita Strand", meta="Parent of Carl, Class of 2019",
+                 text="Working with Pathfinders was a game-changer for our family, turning what could’ve been a very intimidating, time-consuming and stressful experience into an enlightening, empowering and uplifting one. From the very start, Aaron patiently walked us through every step of the college admissions process. He quickly built a strong rapport with our daughter, taking the time to get a well-rounded understanding of her career ambitions, college expectations, strengths, and interests—both in and out of the classroom. Together, they developed a comprehensive plan and timeline that ensured all important deadlines were met (ACT/SAT tests, applications, FAFSA), while also creating a solid list of colleges that were a good fit for our daughter. Thanks to Aaron’s expertise and personalized approach, we confidently navigated the entire college admissions journey – culminating in our daughter’s acceptance to THE Ohio State University where she’ll pursue a Bachelor of Science in Aviation (Go Bucks!). The investment in Pathfinder’s services was absolutely worth every penny. The peace of mind that Aaron provided with his personalized attention, expert guidance, on-going support and encouragement, far exceeded our expectations."),
+    "devita": dict(name="Devita Strand", meta="Parent of Carl, CL Class of 2019",
                    text="I knew this would be the best fit for Carl and our family after a lot of research, and then meeting in person. The advisors were amazingly patient and encouraging with Carl. He’s on the autism spectrum, which posed some unique challenges in the process, but they were able to provide the individualized career planning and college admissions support he needed."),
-    "kathy": dict(name="Kathy Abbott", meta="Parent of Trixie, Class of 2019",
-                  text="Thank you! This is perhaps the best business I’ve come across in a long time... I had interviewed other “college counselling” companies but they didn’t offer the professionalism and decision making structure you offer. As soon as our daughter started the program, my anxiety went down by about 80 percent and I know she felt better. She also made her final decision based on the value framework you laid out for us."),
+    "kathy": dict(name="Kathy Abbott", meta="Parent of Trixie, CL Class of 2019",
+                  text="Thank you! This is perhaps the best business I’ve come across in a long time...I had interviewed other “college counselling” companies but they didn’t offer the professionalism and decision making structure you offer. As soon as our daughter started the program, my anxiety went down by about 80 percent and I know she felt better. She also made her final decision based on the value framework you laid out for us. We’re smart enough to know we had no idea how to choose a college, and we are immensely happy with the decision Trixie made thanks to everyone."),
     "miranda": dict(name="Miranda Barrett", meta="Parent, Arlington, VA",
-                    text="Working with Pathfinders Advisors has been an absolute game-changer for our family during the college planning process. Their advisor, Aaron, brings a steady hand to what can often feel like an overwhelming and emotional journey, providing calm and organization every step of the way. I can’t recommend them enough to any family navigating this challenging milestone of preparing to launch a kid!"),
+                    text="Working with Pathfinders Advisors has been an absolute game-changer for our family during the college planning process. Their advisor, Aaron, brings a steady hand to what can often feel like an overwhelming and emotional journey, providing calm and organization every step of the way. What stood out most was how incredibly likable and relatable he is with my teenage son, building a connection that makes my son feel heard and understood. Aaron's thoughtful guidance is turning a stressful time into a manageable and even enjoyable experience. I can’t recommend them enough to any family navigating this challenging milestone of preparing to launch a kid!"),
 }
 
 # (title, ISO start with US Eastern offset, display time)
 WORKSHOPS = [
-    ("College Financial Aid", "2026-08-20T19:30:00-04:00", "7:30 PM ET"),
-    ("College Planning Strategy", "2026-09-17T19:00:00-04:00", "7:00 PM ET"),
-    ("Education Investment Planning", "2026-10-13T11:30:00-04:00", "11:30 AM ET"),
-    ("College Admissions", "2026-11-19T19:00:00-05:00", "7:00 PM ET"),
-    ("Career & College Planning", "2026-12-13T18:00:00-05:00", "6:00 PM ET"),
+    ("College Financial Aid", "2026-08-20T19:30:00-04:00", "7:30 PM EST"),
+    ("College Planning Strategy", "2026-09-17T19:00:00-04:00", "7:00 PM EST"),
+    ("Education Investment Planning", "2026-10-13T11:30:00-04:00", "11:30 AM EST"),
+    ("College Admissions", "2026-11-19T19:00:00-05:00", "7:00 PM EST"),
+    ("Career & College Planning", "2026-12-13T18:00:00-05:00", "6:00 PM EST"),
 ]
 
-ARTICLES = [
-    ("The Hidden Cost of College: New Federal Rules Put College Value Under the Microscope", "the-hidden-cost-of-college-new-federal-rules-put-college-value-under-the-microscope", "2026-11-07", "2026/08/merit-aid-vs-need-based-aid-college-financial-planning-768x577.png", "Parent reviewing merit aid and need-based aid options for college financial planning", ["Current Events", "Financial"], "When families calculate the cost of college, they typically focus on three numbers: tuition, scholarships and the amount they expect to pay out of pocket. But what if some of the biggest college expenses aren’t included in those calculations?"),
-    ("Private Student Lending Nearly Doubles at SoFi. What Does That Mean for Families Paying for College?", "private-student-lending-nearly-doubles-at-sofi-what-does-that-mean-for-families-paying-for-college", "2026-11-03", "2026/08/college-funding-rules-changed-768x512.jpg", "College funding and student loan planning", ["Current Events", "Financial"], "When families think about paying for college, the conversation usually starts with savings, scholarships, and federal student loans. Private student loans tend to come later in the process, often treated as a last resort."),
-    ("Does the PSAT Still Matter in 2026?", "does-the-psat-still-matter-in-2026", "2026-10-13", "2026/09/sat-act-college-planning-768x512.jpg", "Student preparing for the PSAT, SAT and ACT", ["Current Events", "ACT/SAT"], "Every fall, parents of high school students hear some version of the same announcement: “Your student will be taking the PSAT.” Does the PSAT actually matter? Should my freshman take it?"),
-    ("Trump Accounts vs. 529 Plans: What Families Saving for College Need to Know", "trump-accounts-vs-529-plans-what-families-saving-for-college-need-to-know", "2026-10-07", "2026/07/business-team-financial-planning-768x512.jpg", "Financial planning meeting about college savings accounts", ["Financial"], "Families have a new financial planning tool to consider. On October 1, the U.S. Treasury announced that automatic enrollment for Trump Accounts had been completed."),
-    ("Why Your Client’s “Affordable College List” May Be Completely Wrong", "why-your-clients-affordable-college-list-may-be-completely-wrong", "2026-10-01", "2026/08/affordable-college-list-net-price-768x473.jpg", "College cost and net price comparison", ["Financial", "For Planners"], "When families begin building a college list, one of the first questions is often: “How much does it cost?” It sounds like a straightforward question. Unfortunately, the answer usually isn’t."),
-    ("Colleges Want Your Student: Why States and Universities Are Competing for Families", "colleges-want-your-student-why-states-and-universities-are-competing-for-families", "2026-09-28", "2026/09/colleges-competing-for-students-768x512.jpg", "Universities competing for prospective students", ["Current Events"], "For years, the college admissions conversation has made families feel as though they are competing for colleges. But there is another side to the story."),
-    ("Where Is Your Student Wanted? Why Future Lawyers and Graduate Students Should Think Differently About the Undergraduate Decision", "where-is-your-student-wanted-why-future-lawyers-and-graduate-students-should-think-differently-about-the-undergraduate-decision", "2026-09-25", "2026/09/undergraduate-law-school-strategy-768x435.jpg", "Planning an undergraduate path toward law or graduate school", ["Careers"], "When families tell us their student wants to become a lawyer, physician, psychologist or physical therapist, they often begin looking for the university with the strongest undergraduate program connected to that profession."),
-    ("Can a Higher SAT or ACT Score Actually Save Your Family Money?", "can-a-higher-sat-or-act-score-actually-save-your-family-money", "2026-09-24", "2026/09/sat-act-scholarship-savings-768x519.jpg", "SAT and ACT scores and merit scholarship savings", ["ACT/SAT", "Financial"], "Many families think about SAT and ACT scores primarily in terms of college admission. That framing makes sense as far as it goes, but scores can also change what college costs."),
-    ("The Biggest Financial Decision Most Advisors Aren’t Leading", "the-biggest-financial-decision-most-advisors-arent-leading", "2026-07-09", "2026/07/financial-advisor-client-meeting-768x768.jpg", "Financial advisor meeting with client about college planning decisions", ["Financial", "For Planners"], "For decades, financial advisors have guided families through life’s biggest financial milestones. Yet there is one major financial decision that often receives far less strategic guidance than it deserves."),
-    ("Why Financial Aid Appeals Are the Most Overlooked Opportunity in College Planning", "why-financial-aid-appeals-are-the-most-overlooked-opportunity-in-college-planning", "2026-04-09", "2026/04/Financial-Aid-in-College-Planning-768x512.webp", "Financial aid in college planning", ["Financial", "For Planners"], "Financial advisors pride themselves on optimizing outcomes and aligning financial decisions with long-term goals. Yet the financial aid appeal is often overlooked."),
-    ("AI in College Admissions: What Families Need to Know (Beyond the Headlines)", "ai-in-college-admissions-what-families-need-to-know-beyond-the-headlines", "2026-04-01", "2026/04/AI-in-College-Admissions-768x512.jpg", "AI in college admissions", ["Careers"], "Headlines about colleges like Virginia Tech using AI to review college essays have sparked curiosity, concern, and confusion. This is not just a technology story. It’s a strategy shift."),
-    ("AI Careers for 9th and 10th Graders: Reverse Engineering Education for Future Industry Demand", "ai-careers-for-9th-and-10th-graders", "2026-02-27", "2026/03/AI-Careers-768x419.webp", "AI careers for high school students", ["Careers"], "AI is not just creating “AI jobs.” It’s reshaping every sector. Families who understand where demand is heading can plan an education around it."),
-    ("Understanding the CSS Profile: What It Is and Why It Matters for College Aid", "understanding-the-css-profile-what-it-is-and-why-it-matters-for-college-aid", "2025-10-16", "2025/10/iStock-1220289026.jpg", "Financial aid process paperwork", ["Financial", "For Planners"], "Unlike the FAFSA, the CSS Profile helps private and selective colleges award their own scholarship and grant money. Knowing when to file and how it works can unlock thousands of dollars in aid."),
-    ("FAFSA Opens 10/1: Avoid Mistakes That Cost You Money", "fafsa-opens-oct-1-2025", "2025-09-30", "2025/05/Your-turn-768x768.png", "FAFSA filing reminder", ["Financial"], "FAFSA opens October 1, and families who delay risk losing thousands in aid. Here’s what every parent of a college-bound student must know before filing."),
-]
+# Every post from the old WordPress site (tools/import_posts.py), newest first.
+# Fields: title, slug, date, image (full URL), alt, topics, excerpt.
+POSTS = json.loads((ROOT_DIR / "src" / "data" / "posts.json").read_text(encoding="utf-8"))
+ARTICLES = [(x["title"], x["slug"], x["date"], x["image"], x["alt"], x["topics"], x["excerpt"]) for x in POSTS]
 CATEGORIES = ["Current Events", "Financial", "Careers", "ACT/SAT"]
 _KW = ROOT_DIR / "src" / "data" / "article_keywords.json"
 ARTICLE_KEYWORDS = json.loads(_KW.read_text()) if _KW.exists() else {}
+# The three articles the old financial planners page showed, in its order.
+PLANNER_ARTICLES = ["the-biggest-financial-decision-most-advisors-arent-leading",
+                    "why-financial-aid-appeals-are-the-most-overlooked-opportunity-in-college-planning",
+                    "understanding-the-css-profile-what-it-is-and-why-it-matters-for-college-aid"]
 
 GUIDES = [
     ("College Application Timeline & Checklist", WP + "2026/06/College-Application-Timeline-Checklist-600x347.png", "Every deadline from junior spring to decision day, in one printable checklist."),
@@ -197,7 +189,7 @@ PAGES = [
          og=LOGO_STACK, name="Home"),
     dict(src="educators.html", out="educators/index.html", path="/educators/", nav="educators",
          title="College Planning Support for School Counselors | Pathfinders",
-         desc="Refer families to an expert college advisor and free yourself to focus where you're needed most. See how Pathfinders supports school counselors.",
+         desc="Refer families to an expert college advisor — and free yourself to focus where you're needed most. See how Pathfinders supports school counselors.",
          og=WP + "2025/01/iStock-488580160-modified-392d6dff-f811-4327-91dc-fea3f0286496.jpg", name="Educators"),
     dict(src="financial-planners.html", out="financial-planners/index.html", path="/financial-planners/", nav="planners",
          title="College Financial Aid Guidance for Families - Pathfinders",
@@ -205,7 +197,7 @@ PAGES = [
          og=WP + "2025/01/iStock-488580160-modified-392d6dff-f811-4327-91dc-fea3f0286496.jpg", name="Financial Planners"),
     dict(src="workshops.html", out="workshops/index.html", path="/workshops/", nav="workshops",
          title="Workshops - Pathfinders Advisors",
-         desc="Most families begin by asking: \"What college should my student attend?\" At Pathfinders, we ask a better question: \"What career will help your student thrive?\"",
+         desc="Most families begin by asking: \"What college should my student attend?\"At Pathfinders, we ask a better question: \"What career will help your student thrive?\"",
          og=WP + "2026/07/Webinars-image.jpg-1024x683.jpeg", name="Workshops"),
     dict(src="resources.html", out="resources/index.html", path="/resources/", nav="resources",
          title="Resources & Insights for College Planning - Pathfinders Advisors",
@@ -218,7 +210,7 @@ PAGES = [
     dict(src="contact-us.html", out="contact-us/index.html", path="/contact-us/", nav="contact",
          title="Contact Pathfinders Advisors: Start Your College Planning Journey",
          desc="Get in touch with Pathfinders Advisors for expert guidance. Visit our contact page to connect with our team today and start your journey to success.",
-         og=LOGO_STACK, name="Contact"),
+         og=WP + "2026/10/pf-advising-session-qr.png", name="Contact"),
     dict(src="404.html", out="404.html", path="/404/", nav="", title="Page not found | Pathfinders Advisors",
          desc="This page could not be found.", og=LOGO_STACK, name="Not found", noindex=True),
 ]
@@ -288,27 +280,36 @@ def r_quotecards(arg, ctx):
     return '<div class="grid-3 cards-wrap">' + "".join(cards) + "</div>"
 
 
-def post_card(a, root):
+def post_card(a, root, searchable=True):
     title, slug, date, img, alt, cats, excerpt = a
     d = dt.date.fromisoformat(date)
-    cats_attr = "|".join(cats)
-    tag = cats[0]
-    hay = " ".join([title, excerpt, " ".join(cats), " ".join(ARTICLE_KEYWORDS.get(slug, []))]).lower()
-    return (f'<a class="post-card reveal" href="{article_url(slug)}" data-cats="{e(cats_attr)}" data-search="{e(hay)}">'
-            f'<div class="thumb"><img src="{WP}{img}" alt="{e(alt)}" loading="lazy" width="768" height="480"></div>'
+    tag = cats[0] if cats else "Blog"
+    img = img or LOGO_STACK
+    fit = " thumb-logo" if "Pathfinders_stack_RGB" in img else ""
+    attrs = ""
+    if searchable:
+        hay = " ".join([title, excerpt, " ".join(cats), " ".join(ARTICLE_KEYWORDS.get(slug, []))]).lower()
+        attrs = f' data-cats="{e("|".join(cats))}" data-search="{e(hay)}"'
+    return (f'<a class="post-card reveal" href="{article_url(slug)}"{attrs}>'
+            f'<div class="thumb{fit}"><img src="{e(img)}" alt="{e(alt)}" loading="lazy" width="768" height="480"></div>'
             f'<div class="body"><div class="post-meta"><span class="tag">{e(tag)}</span><time datetime="{date}">{fmt_date(d)}</time></div>'
             f'<h3>{e(title)}</h3><p>{e(excerpt)}</p><span class="text-link">Read article</span></div></a>')
 
 
 def r_articles(arg, ctx):
+    """latest:N | planners | topic:<name>:N | all (searchable list for the knowledge base)."""
     root = ctx["root"]
-    if arg == "latest3":
-        items = ARTICLES[:3]
-    elif arg == "planners3":
-        items = [a for a in ARTICLES if "For Planners" in a[5]][:3]
+    parts = (arg or "all").split(":")
+    if parts[0] == "latest":
+        items = ARTICLES[:int(parts[1])]
+    elif parts[0] == "planners":
+        by_slug = {a[1]: a for a in ARTICLES}
+        items = [by_slug[s] for s in PLANNER_ARTICLES if s in by_slug]
+    elif parts[0] == "topic":
+        items = [a for a in ARTICLES if parts[1] in a[5]][:int(parts[2])]
     else:
-        items = ARTICLES
-    return '<div class="grid-3 cards-wrap">' + "".join(post_card(a, root) for a in items) + "</div>"
+        return '<div class="grid-3 cards-wrap">' + "".join(post_card(a, root) for a in ARTICLES) + "</div>"
+    return '<div class="grid-3 cards-wrap">' + "".join(post_card(a, root, searchable=False) for a in items) + "</div>"
 
 
 def r_filters(_arg, ctx):
@@ -427,8 +428,8 @@ def r_form(kind, ctx):
 
 
 CTA_COPY = {
-    "home": ("Build a plan first", "Don’t spend $400,000. There’s a Return on Education.",
-             "Pathfinders isn’t traditional college counseling. We help students discover who they want to become, identify the educational pathway that supports those goals, and build a financial strategy that maximizes Return on Education (ROE)."),
+    "home": ("Ready? We are too.", "Don’t spend $400,000. There’s a Return on Education.",
+             "We get it. Choosing the right college with your student can be daunting. Let us help you put them in the driver’s seat and take the stress off of you.</p><p>Pathfinders isn’t traditional college counseling. We help students discover who they want to become, identify the educational pathway that supports those goals, and build a financial strategy that maximizes Return on Education (ROE)."),
     "planners": ("For advisors who lead with advice", "Make education one of your clients’ smartest investments.",
                  "You’ve helped your clients accumulate wealth. We help ensure one of their largest planned expenditures is aligned with career outcomes, family values and long-term financial goals."),
     "": ("Ready? We are too.", "Put your student in the driver’s seat.",
@@ -652,6 +653,7 @@ def footer(root):
             f'<div><h2>Who we help</h2><ul><li><a href="{root}">Families &amp; students</a></li><li><a href="{root}educators/">School counselors &amp; educators</a></li><li><a href="{root}financial-planners/">Financial planners</a></li></ul></div>'
             f'<div><h2>Learn</h2><ul><li><a href="{root}workshops/">Free workshops</a></li><li><a href="{root}resources/">Knowledge base</a></li><li><a href="{root}#free-guides">Free guides</a></li><li><a href="{SITE}/log-in/">Course login</a></li></ul></div>'
             f'<div><h2>Company</h2><ul><li><a href="{root}about/">About us</a></li><li><a href="{root}contact-us/">Contact</a></li><li><a href="{root}contact-us/#book">Book a strategy call</a></li></ul></div>'
+            f'<p class="footer-line">Career First. College Second. | Education Investment Advisors</p>'
             f'</div><div class="footer-bottom"><p style="margin:0">&copy; <span data-year>{NOW.year}</span> Pathfinders College &amp; Career Advisors LLC. All rights reserved.</p>'
             f'<nav aria-label="Legal"><a href="{SITE}/privacy-policy/">Privacy Policy</a><a href="{SITE}/terms-of-service/">Terms of Service</a></nav></div></div></footer>'
             f'<div class="mobile-cta"><a class="btn" href="{root}contact-us/#book">Book a free strategy call</a></div>')

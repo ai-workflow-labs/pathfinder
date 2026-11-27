@@ -168,11 +168,6 @@ strong, b { font-weight: 600; }
 }
 .main-nav a:hover { color: var(--navy); background: var(--teal-50); }
 .main-nav a[aria-current="page"] { color: var(--navy); }
-.main-nav a[aria-current="page"]::after {
-  content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px;
-  background-image: linear-gradient(90deg, var(--orange-brand) 60%, transparent 60%);
-  background-size: 7px 2px;
-}
 .header-cta { display: flex; align-items: center; gap: 12px; flex: none; }
 .header-cta .btn { white-space: nowrap; }
 .main-nav .desktop-hide { display: none; }
@@ -200,7 +195,6 @@ strong, b { font-weight: 600; }
   .main-nav.is-open { transform: translateX(0); visibility: visible; transition: transform .3s ease; }
   .main-nav ul { flex-direction: column; align-items: stretch; gap: 2px; }
   .main-nav a { font-size: 1.05rem; padding: 14px 14px; }
-  .main-nav a[aria-current="page"]::after { left: 14px; right: auto; width: 40px; bottom: 8px; }
   .main-nav .mobile-only { display: block; }
   .main-nav .mobile-only .btn { margin-top: 16px; width: 100%; color: #fff; display: flex; padding: 12px 20px; }
   .main-nav .mobile-only .btn:hover { background: var(--orange-hover); color: #fff; }
@@ -260,7 +254,7 @@ strong, b { font-weight: 600; }
 /* stats strip overlapping hero */
 .stats-wrap { position: relative; z-index: 2; margin-top: calc(-1 * clamp(80px, 10vw, 110px)); }
 .stats {
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow);
   border: 1px solid var(--line);
 }
@@ -273,6 +267,8 @@ strong, b { font-weight: 600; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(3)::before { display: none; }
   .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .stat:nth-child(5) { grid-column: 1 / -1; }
+  .stat:nth-child(5)::before { display: none; }
 }
 
 /* Page hero (inner pages) */
@@ -714,3 +710,19 @@ strong, b { font-weight: 600; }
 .belief-text { font-family: var(--font-serif); font-weight: 300; font-size: 1.45rem; line-height: 1.3; color: #fff; margin-bottom: 12px; }
 .belief p:last-child { color: #B9CFD6; margin: 0; }
 .bg-navy .value-grid .card h3 { color: var(--navy); }
+
+/* ---------- Content carried over from the old site ---------- */
+.hero-sub { font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.35; font-weight: 500; color: var(--orange-soft); max-width: 30em; margin: 0 0 14px; letter-spacing: -.01em; }
+.page-hero h1 + .hero-sub, .hero h1 + .hero-sub { margin-top: 4px; }
+.kb-topic { margin-bottom: clamp(36px, 5vw, 56px); }
+.kb-topic h2, #browse h2 { font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin-bottom: 20px; }
+.post-card .thumb-logo { background: #fff; display: flex; align-items: center; justify-content: center; }
+.post-card .thumb-logo img { object-fit: contain; width: 70%; height: 70%; }
+.post-card:hover .thumb-logo img { transform: none; }
+.footer-line { grid-column: 1 / -1; margin: 8px 0 0; font-family: var(--font-head); font-size: .9rem; color: var(--muted); }
+.featured-quote + .grid-3 { margin-bottom: clamp(28px, 4vw, 44px); }
+.team-link { margin-top: 14px; }
+.cta-band .cta-kicker { font-size: .78rem; margin-bottom: 10px; }
+.cta-band .cta-question { margin-top: 10px; font-family: var(--font-head); font-weight: 600; color: var(--orange-soft); font-size: 1.3rem; }
+.cta-band p + p { margin-top: 10px; }
+.kb-more { display: flex; width: fit-content; margin: 32px auto 0; }

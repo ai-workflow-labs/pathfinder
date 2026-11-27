@@ -101,17 +101,31 @@
       });
     });
   }
+  // Long lists show 12 cards at a time; every card stays in the HTML for search engines.
+  var PAGE = 12, limit = PAGE, moreBtn = null;
+  if (posts.length > PAGE) {
+    moreBtn = document.createElement("button");
+    moreBtn.type = "button";
+    moreBtn.className = "btn btn-outline kb-more";
+    moreBtn.textContent = "Show more articles";
+    moreBtn.addEventListener("click", function () { limit += PAGE; applyKb(); });
+    var grid = posts[0].parentNode;
+    grid.parentNode.insertBefore(moreBtn, grid.nextSibling);
+  }
   function applyKb() {
     var groups = kbInput && kbInput.value.trim() ? terms(kbInput.value) : [];
-    var n = 0;
+    var n = 0, shown = 0;
     posts.forEach(function (p) {
-      var cats = p.getAttribute("data-cats").split("|");
+      var cats = (p.getAttribute("data-cats") || "").split("|");
       var inCat = activeCat === "all" || cats.indexOf(activeCat) !== -1;
       var hay = (p.getAttribute("data-search") || p.textContent).toLowerCase();
-      var show = inCat && (!groups.length || matches(hay, groups));
+      var match = inCat && (!groups.length || matches(hay, groups));
+      if (match) n++;
+      var show = match && shown < limit;
+      if (show) shown++;
       p.hidden = !show;
-      if (show) n++;
     });
+    if (moreBtn) moreBtn.hidden = shown >= n;
     var count = document.querySelector("[data-post-count]");
     if (count) count.textContent = n + (n === 1 ? " article" : " articles");
     if (kbEmpty) kbEmpty.hidden = n !== 0;
@@ -121,16 +135,18 @@
     chip.addEventListener("click", function () {
       activeCat = chip.getAttribute("data-filter");
       chips.forEach(function (c) { c.setAttribute("aria-pressed", c === chip ? "true" : "false"); });
+      limit = PAGE;
       applyKb();
     });
   });
   if (kbForm) {
     kbForm.addEventListener("submit", function (e) { e.preventDefault(); applyKb(); });
-    kbInput.addEventListener("input", applyKb);
-    kbClear.addEventListener("click", function () { kbInput.value = ""; applyKb(); kbInput.focus(); });
+    kbInput.addEventListener("input", function () { limit = PAGE; applyKb(); });
+    kbClear.addEventListener("click", function () { kbInput.value = ""; limit = PAGE; applyKb(); kbInput.focus(); });
     var q0 = new URLSearchParams(location.search).get("q");
-    if (q0) { kbInput.value = q0; applyKb(); }
+    if (q0) kbInput.value = q0;
   }
+  if (posts.length) applyKb();
 
   /* Long reviews: read more */
   document.querySelectorAll(".review .clamp").forEach(function (p) {
