@@ -253,6 +253,21 @@ PAGES = [
          title="About Amy Wisdom \u2013 College & Career Planning Experts",
          desc="Proud mom and dedicated Realtor balancing a full house and a busy career. I\u2019m celebrating two major milestones this year: my daughter is graduating from FSU",
          og=WP + "2026/03/Amy-Wisdom-1024x682.webp", name="Amy Wisdom", person=("amy-wisdom", "Amy Wisdom"), noindex=True, canonical=False),
+    dict(src="get-college-right.html", out="get-college-right/index.html", path="/get-college-right/", nav="",
+         title='Get College Right - Pathfinders Advisors', desc='Choosing the right major and college can feel overwhelming.With rising costs and confusing admissions systems, it’s no wonder:',
+         og=WP + "2023/09/pexels-george-pak-7972481-683x1024.jpg", name='Get College Right'),
+    dict(src="sat-act-quick-reference-guide.html", out="sat-act-quick-reference-guide/index.html", path="/sat-act-quick-reference-guide/", nav="",
+         title='SAT/ACT Quick Reference Guide - Pathfinders Advisors', desc='Download our free SAT vs ACT quick reference guide with test dates, comparison tables, and prep strategies to help your student pick the right exam.',
+         og=WP + "2025/05/Congrats-1024x1024.png", name='SAT/ACT Quick Reference Guide'),
+    dict(src="college-application-checklist.html", out="college-application-checklist/index.html", path="/college-application-checklist/", nav="",
+         title='College Application Checklist - Pathfinders Advisors', desc='Download our free college application checklist covering essays, deadlines, financial aid, and every step your family needs to stay organized.',
+         og=WP + "2025/05/Congrats-1024x1024.png", name='College Application Checklist'),
+    dict(src="summer-camp-scholarship.html", out="summer-camp-scholarship/index.html", path="/summer-camp-scholarship/", nav="",
+         title='Summer Camp Scholarship - Pathfinders Advisors', desc='Apply for the Pathfinders Advisors summer camp scholarship to help your high school student explore careers and build a strong college profile.',
+         og=WP + "2026/01/Image_2025-12-31_at_2.48.17_AM-1024x682.jpeg", name='Summer Camp Scholarship'),
+    dict(src="rightwaywebinar.html", out="rightwaywebinar/index.html", path="/rightwaywebinar/", nav="",
+         title='Find the Right College & Cost: Webinar by Pathfinders Advisors', desc='Unlock the secrets to affordable college selection with our 30-minute webinar. Discover expert strategies to find the right college for your high schooler. Watch now!',
+         og=WP + "2020/10/logo2.png", name='Rightwaywebinar'),
     dict(src="college-planning-locations.html", out="college-planning-locations/index.html", path="/college-planning-locations/", nav="",
          title=LOCATIONS["hub"]["title"], desc=LOCATIONS["hub"]["desc"], og=LOCATIONS["hub"]["og"], name="College Planning Locations"),
 ] + [
@@ -437,6 +452,9 @@ GRAD_YEARS = [str(y) for y in range(NOW.year, NOW.year + 6)] + ["Other / not sur
 
 
 def r_form(kind, ctx):
+    pick = None
+    if kind.startswith("resource:"):  # resource form with one guide already chosen
+        kind, pick = "resource", int(kind.split(":")[1])
     if kind in ("educator", "planner"):
         fields = [field("full_name", "Full name", required=True, full=True, auto="name"),
                   field("email", "Email", "email", True, auto="email"),
@@ -491,6 +509,9 @@ def r_form(kind, ctx):
                 f'{sms}<p class="full consent" style="margin:0">{CONSENT}</p>'
                 f'<div class="full"><button class="btn btn-block" type="submit">{btn}</button></div></div>'
                 f'<div class="form-status" role="status" aria-live="polite"></div></form>')
+    if pick is not None:
+        title = GUIDES[pick][0]
+        html_out = html_out.replace(f'<option value="{e(title)}">', f'<option value="{e(title)}" selected>')
     return html_out.replace("{FORMID}", kind)
 
 

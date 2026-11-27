@@ -753,3 +753,19 @@ strong, b { font-weight: 600; }
 .city-stats-title { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
 .city-stats .stats { grid-template-columns: repeat(4, 1fr); box-shadow: var(--shadow-sm); }
 @media (max-width: 860px) { .city-stats .stats { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- Landing pages ---------- */
+.stat-callout { background: var(--navy); color: #DCE8EC; border-radius: var(--radius-lg); padding: clamp(24px, 4vw, 40px); max-width: 900px; margin: 0 auto; display: grid; gap: 14px; }
+.stat-callout p { margin: 0; font-size: 1.05rem; }
+.stat-callout strong { color: #fff; font-family: var(--font-head); font-size: clamp(1.3rem, 2.6vw, 1.8rem); margin-right: 6px; }
+.guide-illustration { width: min(320px, 70%); margin: 24px 0 0; }
+.covers-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.covers-list li { border: 1px solid rgba(255,255,255,.25); border-radius: var(--radius); padding: 18px 22px; font-family: var(--font-head); font-weight: 600; font-size: 1.1rem; color: #fff; }
+.year-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(18px, 3vw, 28px); }
+.year-card h2 { font-size: clamp(1.25rem, 2vw, 1.5rem); margin-bottom: 18px; }
+.year-media { display: grid; gap: 14px; align-content: start; }
+.year-media img { width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+@media (max-width: 860px) { .year-grid { grid-template-columns: 1fr; } }
+.mini-steps-5 { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 1000px) { .mini-steps-5 { grid-template-columns: 1fr 1fr; } .mini-steps-5::before { display: none; } }
+@media (max-width: 480px) { .mini-steps-5 { grid-template-columns: 1fr; } }
