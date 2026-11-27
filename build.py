@@ -182,6 +182,8 @@ FP_FAQS = [
 ]
 
 # --------------------------------------------------------------------------- page config
+LOCATIONS = json.loads((ROOT_DIR / "src" / "data" / "locations.json").read_text(encoding="utf-8"))
+
 PAGES = [
     dict(src="index.html", out="index.html", path="/", nav="home",
          title="Education Investment Advisors | Career First. College Second. | Pathfinders",
@@ -251,6 +253,13 @@ PAGES = [
          title="About Amy Wisdom \u2013 College & Career Planning Experts",
          desc="Proud mom and dedicated Realtor balancing a full house and a busy career. I\u2019m celebrating two major milestones this year: my daughter is graduating from FSU",
          og=WP + "2026/03/Amy-Wisdom-1024x682.webp", name="Amy Wisdom", person=("amy-wisdom", "Amy Wisdom"), noindex=True, canonical=False),
+    dict(src="college-planning-locations.html", out="college-planning-locations/index.html", path="/college-planning-locations/", nav="",
+         title=LOCATIONS["hub"]["title"], desc=LOCATIONS["hub"]["desc"], og=LOCATIONS["hub"]["og"], name="College Planning Locations"),
+] + [
+    dict(src="city", city=c, out=c["path"].strip("/") + "/index.html", path=c["path"], nav="",
+         title=c["title"], desc=c["desc"], og=c["og"], name=c["h1"])
+    for c in LOCATIONS["cities"]
+] + [
     dict(src="404.html", out="404.html", path="/404/", nav="", title="Page not found | Pathfinders Advisors",
          desc="This page could not be found.", og=LOGO_STACK, name="Not found", noindex=True),
 ]
@@ -553,10 +562,103 @@ def r_sitemap(_arg, ctx):
             f'<div class="sitemap-group"><h2>Blog Posts</h2><ul class="sitemap-list">{li(post_items)}</ul></div>')
 
 
+def r_locations(_arg, ctx):
+    """Location cards on the hub, in the old page's order with its text."""
+    lines = LOCATIONS["hub"]["lines"]
+    cards, i = [], 0
+    while i < len(lines):
+        t, txt = lines[i]
+        if t == "h3":
+            body = lines[i + 1][1] if i + 1 < len(lines) and lines[i + 1][0] == "p" else ""
+            link_text = lines[i + 2][1] if i + 2 < len(lines) and lines[i + 2][0] == "a" else "College planning in " + txt
+            slug = next((c["path"] for c in LOCATIONS["cities"] if c["h1"].find(txt.split(",")[0]) >= 0), "")
+            cards.append(f'<a class="card audience-card reveal" href="{link(slug, ctx["root"])}">'
+                         f'<span class="icon-chip">{icon("map")}</span><h3>{e(txt)}</h3><p>{e(body)}</p>'
+                         f'<span class="text-link">{e(link_text)}</span></a>')
+            i += 3
+            continue
+        i += 1
+    return '<div class="grid-3 cards-wrap">' + "".join(cards) + "</div>"
+
+
+def city_body(c, root):
+    """A city page, section by section in the old page's order, in the house design."""
+    book = f"{root}contact-us/#book"
+    out = [f'<section class="page-hero">{ROUTE_SVG}<div class="container">'
+           f'<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{root}">Home</a></li>'
+           f'<li><a href="{root}college-planning-locations/">Locations</a></li><li aria-current="page">{e(c["h1"].split(" College")[0] if c["h1"].startswith(("Columbus", "Cincinnati")) else c["h1"].replace("College & Career Planning in ", ""))}</li></ol></nav>'
+           f'<span class="eyebrow">Available virtually</span><h1>{e(c["h1"])}</h1>'
+           f'<p class="lead">{e(c["lead"])}</p>'
+           f'<div class="btn-row hero-actions"><a class="btn" href="{book}">{e((c.get("hero_links") or ["Book Your Free Strategy Call"])[0])} {icon("arrow")}</a></div>'
+           f'</div></section>']
+    alt = False
+    for sec in c["sections"]:
+        kind = sec["kind"]
+        eyebrow = f'<span class="eyebrow">{e(sec["eyebrow"].title() if sec["eyebrow"].isupper() else sec["eyebrow"])}</span>' if sec.get("eyebrow") else ""
+        head = f'<div class="section-head reveal">{eyebrow}<h2>{e(sec["heading"])}</h2>' + "".join(f"<p>{e(x)}</p>" for x in sec.get("intro", []) if x) + "</div>"
+        bg = " bg-cream" if alt else ""
+        alt = not alt
+        if kind == "text" and sec is c["sections"][-1]:
+            label = sec.get("button") or "Book Your Free Strategy Call"
+            out.append(f'<section class="section-tight"><div class="container"><div class="cta-band reveal">{ROUTE_SVG}'
+                       f'<div><h2>{e(sec["heading"])}</h2>' + "".join(f"<p>{e(x)}</p>" for x in sec.get("intro", [])) +
+                       f'</div><div class="btn-row"><a class="btn" href="{book}">{e(label)} {icon("arrow")}</a></div></div></div></section>')
+            continue
+        if kind == "text":
+            btn = f'<a class="btn btn-outline" href="{book}">{e(sec["button"])}</a>' if sec.get("button") else ""
+            out.append(f'<section class="section{bg}"><div class="container container-narrow">{head}{btn}</div></section>')
+            continue
+        if kind in ("cards", "colleges"):
+            cards = []
+            for it in sec["items"]:
+                more = "".join(f'<p class="muted" style="margin:8px 0 0">{e(x)}</p>' for x in it.get("more", []))
+                if kind == "colleges" and it["title"].lower().startswith("find the right"):
+                    label = sec.get("button") or "Schedule Your Free Call"
+                    cards.append(f'<div class="card reveal city-cta-card"><h3>{e(it["title"])}</h3><p>{e(it["text"])}</p>{more}'
+                                 f'<a class="btn btn-sm" href="{book}">{e(label)}</a></div>')
+                    continue
+                chip = f'<span class="icon-chip">{icon("school" if kind == "colleges" else "check")}</span>'
+                cards.append(f'<div class="card reveal">{chip}<h3>{e(it["title"])}</h3><p class="muted" style="margin:0">{e(it["text"])}</p>{more}</div>')
+            out.append(f'<section class="section{bg}"><div class="container">{head}<div class="grid-3 cards-wrap">{"".join(cards)}</div></div></section>')
+            continue
+        if kind == "quotes":
+            qs = []
+            for q in sec["items"]:
+                who = e(q["by"]) + (f'<span class="review-source" style="display:block">{e(q["where"])}</span>' if q.get("where") else "")
+                qs.append(f'<figure class="review reveal" style="margin:0"><div class="stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>'
+                          f'<blockquote style="margin:0"><p>{e(q["text"])}</p></blockquote>'
+                          f'<figcaption class="review-name" style="margin-top:12px">{who}</figcaption></figure>')
+            block = f'<section class="section{bg}"><div class="container">{head}<div class="grid-3 cards-wrap">{"".join(qs)}</div>'
+            r = sec.get("ready")
+            if r:
+                block += (f'<div class="card reveal city-ready"><div><h3>{e(r["heading"])}</h3><p class="muted" style="margin:0">{e(r["text"])}</p></div>'
+                          f'<a class="btn" href="{book}">{e(r["button"] or "Book Your Free Strategy Call")}</a></div>')
+            if sec.get("stats"):
+                block += stats_html(sec["stats"])
+            out.append(block + "</div></section>")
+            continue
+        if kind == "stats":
+            out.append(f'<section class="section-tight{bg}"><div class="container"><div class="section-head reveal"><h2>{e(sec["heading"])}</h2></div>'
+                       f'{stats_html(sec["items"], heading=False)}</div></section>')
+            continue
+        if kind == "faq":
+            items = "".join(f'<details{" open" if i == 0 else ""}><summary>{e(x["q"])}</summary><div class="answer"><p>{e(x["a"])}</p></div></details>'
+                            for i, x in enumerate(sec["items"]))
+            out.append(f'<section class="section{bg}"><div class="container faq-layout"><div class="sticky reveal">{eyebrow}<h2>{e(sec["heading"])}</h2>'
+                       f'<a class="btn btn-outline" href="{book}">Talk to an advisor</a></div><div class="reveal"><div class="faq">{items}</div></div></div></section>')
+    return "\n".join(out)
+
+
+def stats_html(stats, heading=True):
+    cells = "".join(f'<div class="stat" role="listitem"><div class="stat-value">{e(x["value"])}</div><div class="stat-label">{e(x["label"])}</div></div>' for x in stats)
+    h = '<h3 class="city-stats-title">Pathfinders by the numbers</h3>' if heading else ""
+    return f'<div class="city-stats reveal">{h}<div class="stats" role="list">{cells}</div></div>'
+
+
 RENDERERS = {
     "REVIEWS": r_reviews, "QUOTE": r_quote, "QUOTECARDS": r_quotecards, "ARTICLES": r_articles,
     "FILTERS": r_filters, "FAQ": r_faq, "WORKSHOPS": r_workshops, "GUIDES": r_guides, "FORM": r_form,
-    "CTA": r_cta, "VIDEO": r_video, "TESTIMONIALS": r_testimonials, "SITEMAP": r_sitemap,
+    "CTA": r_cta, "VIDEO": r_video, "TESTIMONIALS": r_testimonials, "SITEMAP": r_sitemap, "LOCATIONS": r_locations,
 }
 
 # --------------------------------------------------------------------------- schema
@@ -694,6 +796,17 @@ def schema_for(p):
                "provider": {"@id": SITE + "/#organization"}, "inLanguage": "en-US"}]
     elif key == "contact-us.html":
         g += [webpage_node(p, "ContactPage"), breadcrumb_node(p)]
+    elif key == "city":
+        c = p["city"]
+        place = c["h1"].replace("College & Career Planning in ", "").split(" College")[0]
+        svc = service_node(p["path"] + "#service", "College & Career Planning in " + place, p["desc"],
+                           "Parents of high school students and students in grades 9 to 12", "College admissions and career planning consulting")
+        svc["areaServed"] = {"@type": "City", "name": place}
+        faq = next((x for x in c["sections"] if x["kind"] == "faq"), None)
+        g += [webpage_node(p), breadcrumb_node(p), svc]
+        if faq:
+            g.append({"@type": "FAQPage", "@id": SITE + p["path"] + "#faq", "isPartOf": {"@id": SITE + p["path"] + "#webpage"},
+                      "mainEntity": [{"@type": "Question", "name": x["q"], "acceptedAnswer": {"@type": "Answer", "text": x["a"]}} for x in faq["items"]]})
     elif key == "faq.html":
         g += [webpage_node(p, "FAQPage"), breadcrumb_node(p)]
         g[-2]["mainEntity"] = [{"@type": "Question", "name": x["q"], "acceptedAnswer": {"@type": "Answer", "text": " ".join(x["a"])}} for x in FAQ_PAGE]
@@ -867,7 +980,8 @@ def build():
         root = "../" * depth if depth else "./"
         if p["src"] == "404.html":
             root = "/"  # 404 is served at any depth, so its links must be absolute
-        body = render_body((SRC / p["src"]).read_text(encoding="utf-8"), {"root": root, "page": p})
+        text = city_body(p["city"], root) if p["src"] == "city" else (SRC / p["src"]).read_text(encoding="utf-8")
+        body = render_body(text, {"root": root, "page": p})
         dest = OUT / p["out"]
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(layout(p, body, root), encoding="utf-8")

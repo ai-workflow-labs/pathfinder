@@ -741,3 +741,15 @@ strong, b { font-weight: 600; }
 .sitemap-list li { break-inside: avoid; padding: 7px 0; border-bottom: 1px solid var(--line); }
 .sitemap-list a { text-decoration: none; }
 .sitemap-list a:hover { text-decoration: underline; }
+
+/* ---------- Location pages ---------- */
+.city-cta-card { grid-column: 1 / -1; background: var(--navy); border-color: var(--navy); color: #D6E5EA; display: flex; flex-direction: column; gap: 10px; }
+.city-cta-card h3 { color: #fff; }
+.city-cta-card p { color: #B9CFD6; margin: 0 0 8px; }
+.city-cta-card .btn { align-self: flex-start; }
+.city-ready { margin-top: clamp(24px, 3vw, 32px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+.city-ready h3 { margin-bottom: 4px; }
+.city-stats { margin-top: clamp(28px, 4vw, 44px); }
+.city-stats-title { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+.city-stats .stats { grid-template-columns: repeat(4, 1fr); box-shadow: var(--shadow-sm); }
+@media (max-width: 860px) { .city-stats .stats { grid-template-columns: repeat(2, 1fr); } }
