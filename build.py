@@ -38,6 +38,22 @@ SOCIAL = {
     "youtube": "https://www.youtube.com/@PathfindersAdvisors",
 }
 NOW = dt.datetime.now(dt.timezone.utc)
+
+# Tracking: the same three Google tags the old WordPress site loads on every page
+# (Site Kit Google tag, Google Tag Manager container, GA4 measurement ID).
+# Only the --live build includes them, so review builds never send test visits
+# to the client's analytics.
+GTAG_SITEKIT = "GT-WPFF7CV8"
+GTM_ID = "GTM-5KM38V54"
+GA4_ID = "G-R3804EF713"
+TRACKING_HEAD = f"""<script src="https://www.googletagmanager.com/gtag/js?id={GTAG_SITEKIT}" async></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag("set","linker",{{"domains":["www.pathfindersadvisors.com"]}});gtag("js",new Date());gtag("config","{GTAG_SITEKIT}");</script>
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);}})(window,document,'script','dataLayer','{GTM_ID}');</script>
+<script src="https://www.googletagmanager.com/gtag/js?id={GA4_ID}" async></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA4_ID}',{{}});</script>
+"""
+TRACKING_BODY = f"""<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+"""
 VERSION = NOW.strftime("%Y%m%d%H%M%S")
 
 e = lambda s: html.escape(s, quote=True)  # noqa: E731
@@ -1026,6 +1042,7 @@ def layout(p, body, root):
 <meta property="og:image" content="{p["og"]}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#003D51">
+{TRACKING_HEAD if LIVE else ""}
 <link rel="icon" href="{WP}2025/01/cropped-Pathfinders_hor_RGB-32x32.png" sizes="32x32">
 <link rel="icon" href="{WP}2025/01/cropped-Pathfinders_hor_RGB-192x192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="{WP}2025/01/cropped-Pathfinders_hor_RGB-180x180.png">
@@ -1038,7 +1055,7 @@ def layout(p, body, root):
 </script>
 </head>
 <body class="page-{p["nav"] or "404"}">
-<a class="skip-link" href="#main">Skip to content</a>
+{TRACKING_BODY if LIVE else ""}<a class="skip-link" href="#main">Skip to content</a>
 {header(p, root)}
 <main id="main">
 {body}
