@@ -1,0 +1,23 @@
+{
+ "_about": "Alt text for post images that had an empty alt on the old site, keyed by their path under wp-content/uploads/. Written from looking at each image and the section it sits in.",
+ "alts": {
+  "2026/03/AI-Governance-Ethics-Policy.jpg": "Lawmakers at their desks in a state legislative chamber",
+  "2026/03/AI-Skilled-Trades-Technical-Operators.jpg": "Technician in a hard hat and safety vest setting up a drone with a laptop",
+  "2026/03/Law-School-Students.jpg": "Law school graduates in doctoral robes posing together at commencement",
+  "2026/03/medical-class.jpg": "Large class of medical students in a lecture hall",
+  "2026/02/young-girls-watching-laptop-together-1024x683.jpg": "Two teenage girls looking at a laptop and a tablet together at a cafe",
+  "2026/02/serious-teacher-checking-assignment-two-students-1024x683.jpg": "Tutor checking an assignment with two students at a table",
+  "2026/02/young-teacher-telling-two-students-about-corporate-budgeting-1024x683.jpg": "Instructor explaining a budget worksheet to two students",
+  "2026/02/tutor-girl-home-student-having-idea-1024x683.jpg": "Tutor helping a teenage girl with her homework at home",
+  "2025/12/young-student-wearing-graduation-cape-looking-her-notebook-1024x683.jpg": "Graduate in cap and gown reading her notebook",
+  "2025/12/unnamed-2.jpg": "Young man taking notes from a tablet at his desk",
+  "2025/12/unnamed-3-1.jpg": "Student holding a book and raising a finger with an idea at her desk",
+  "2025/11/image-1.png": "Two students studying at home, one of them on the phone",
+  "2025/11/image-3-1024x684.jpeg": "Three high school students studying together at a table",
+  "2025/11/image-4-1024x684.jpeg": "Two smiling students studying with books at a table",
+  "2025/11/image-1-1024x682.jpeg": "Two students studying on outdoor steps with a notebook and a tablet",
+  "2025/11/image-2-1024x682.jpeg": "Group of students studying together on the grass outside",
+  "2025/11/image-1024x684.jpeg": "Student writing notes on a park bench",
+  "2025/11/image.png": "Student with a backpack reading his notes on campus"
+ }
+}

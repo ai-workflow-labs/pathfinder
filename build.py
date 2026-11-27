@@ -145,7 +145,24 @@ WORKSHOPS = [
 # Every post from the old WordPress site (tools/import_posts.py), newest first.
 # Fields: title, slug, date, image (full URL), alt, topics, excerpt.
 POSTS = json.loads((ROOT_DIR / "src" / "data" / "posts.json").read_text(encoding="utf-8"))
-ARTICLES = [(x["title"], x["slug"], x["date"], x["image"], x["alt"], x["topics"], x["excerpt"]) for x in POSTS]
+# Licensed iStock photos for posts that had no photo of their own or shared one (see tools/make_photos.py).
+PHOTOS = json.loads((ROOT_DIR / "src" / "data" / "photos.json").read_text(encoding="utf-8"))
+IMAGE_ALTS = json.loads((ROOT_DIR / "src" / "data" / "image_alts.json").read_text(encoding="utf-8"))["alts"]
+
+
+def fill_alts(body):
+    """Give post images that came over with an empty alt the alt text in image_alts.json."""
+    def one(m):
+        tag = m.group(0)
+        src = re.search(r'src="([^"]+)"', tag).group(1).split("uploads/")[-1]
+        if src not in IMAGE_ALTS or re.search(r'alt="[^"]+"', tag):
+            return tag
+        alt = f'alt="{e(IMAGE_ALTS[src])}"'
+        return re.sub(r'alt=""', alt, tag) if 'alt=""' in tag else tag.replace("<img ", f"<img {alt} ", 1)
+    return re.sub(r"<img [^>]*>", one, body)
+
+
+ARTICLES =[(x["title"], x["slug"], x["date"], x["image"], x["alt"], x["topics"], x["excerpt"]) for x in POSTS]
 CATEGORIES = ["Current Events", "Financial", "Careers", "ACT/SAT"]
 _KW = ROOT_DIR / "src" / "data" / "article_keywords.json"
 ARTICLE_KEYWORDS = json.loads(_KW.read_text()) if _KW.exists() else {}
@@ -387,6 +404,9 @@ def post_card(a, root, searchable=True):
     title, slug, date, img, alt, cats, excerpt = a
     d = dt.date.fromisoformat(date)
     tag = cats[0] if cats else "Blog"
+    photo = PHOTOS["posts"].get(slug)
+    if photo:
+        img, alt = f'{root}assets/img/photos/{photo["name"]}-768x512.jpg', photo["alt"]
     img = img or LOGO_STACK
     fit = " thumb-logo" if "Pathfinders_stack_RGB" in img else ""
     attrs = ""
@@ -736,19 +756,32 @@ def add_heading_ids(body):
     return re.sub(r"<h2([^>]*)>(.*?)</h2>", tag, body, flags=re.S), toc
 
 
+def in_body(img, body):
+    """True when the post body already shows this image (any WordPress size of it),
+    so the featured image is not shown twice on the page."""
+    name, ext = img.rsplit("/", 1)[-1].rsplit(".", 1)
+    stem = re.sub(r"-\d+x\d+$", "", name)
+    return bool(re.search(r'<img [^>]*src="[^"]*/' + re.escape(stem) + r'(?:-\d+x\d+)?\.' + re.escape(ext) + '"', body))
+
+
 def post_body(x, root):
     cats = x.get("categories") or []
     cat_links = " ".join(f'<a class="tag" href="{link("/category/" + c["slug"] + "/", root)}">{e(c["name"])}</a>' for c in cats)
     d = dt.date.fromisoformat(x["date"])
     who = f' &middot; By {e(x["author"])}' if x.get("author") else ""
-    body, toc = add_heading_ids(local_links(x["body"], root))
+    body, toc = add_heading_ids(local_links(fill_alts(x["body"]), root))
     toc_html = ""
     if len(toc) >= 3:
         toc_html = ('<nav class="post-toc" aria-label="Table of contents"><h2>Table of Contents</h2><ol>'
                     + "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in toc) + "</ol></nav>")
     img = x.get("og") or ""
     hero_img = ""
-    if img and "Pathfinders_stack_RGB" not in img and "logo" not in img.lower():
+    photo = PHOTOS["posts"].get(x["slug"])
+    if photo:
+        base = f'{root}assets/img/photos/{photo["name"]}'
+        hero_img = (f'<figure class="post-hero-img"><img src="{base}.jpg" srcset="{base}-768x512.jpg 768w, {base}.jpg 1200w" '
+                    f'sizes="(max-width: 820px) 100vw, 760px" alt="{e(photo["alt"])}" title="{e(photo["title"])}" width="1200" height="800"></figure>')
+    elif img and "Pathfinders_stack_RGB" not in img and "logo" not in img.lower() and not in_body(img, x["body"]):
         hero_img = f'<figure class="post-hero-img"><img src="{e(img)}" alt="{e(x.get("og_alt") or x["title"])}" width="1200" height="800"></figure>'
     tags = "".join(f'<li>{e(t)}</li>' for t in x.get("tags", []))
     tags_html = f'<div class="post-tags"><h2>Topics</h2><ul>{tags}</ul></div>' if tags else ""

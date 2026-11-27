@@ -1,0 +1,181 @@
+{
+ "_about": "Licensed iStock photos (client's iStock subscription, re-downloaded 2026-11-27) used where a post or page had no photo of its own, or shared one with another post or page. Keys under posts are post slugs; keys under pages are page names. The old og:image meta of each post or page is not changed. Originals: from-downloads/istock/ in the project folder. Web copies are made by tools/make_photos.py.",
+ "pages": {
+  "educators": {
+   "istock": "519935979",
+   "name": "teacher-helping-high-school-student",
+   "alt": "High school teacher working one on one with a smiling student in a school library",
+   "title": "Educators helping students plan for college"
+  },
+  "financial-planners": {
+   "istock": "2259819602",
+   "name": "financial-planner-preparing-family-plan",
+   "alt": "Financial planner reviewing a client's financial plan with charts on a laptop and a calculator",
+   "title": "Financial planners and college planning"
+  },
+  "rightwaywebinar": {
+   "istock": "2221063088",
+   "name": "father-daughter-using-tablet-at-home",
+   "alt": "Father and teenage daughter using a tablet together at home",
+   "title": "College and career planning webinar for families"
+  }
+ },
+ "posts": {
+  "give-the-gift-of-a-clear-career-path": {
+   "istock": "2203108607",
+   "name": "teen-showing-family-laptop-at-home",
+   "alt": "Teenage student showing his family something on a laptop at home",
+   "title": "Give the gift of a clear career path"
+  },
+  "a-college-just-cut-tuition-by-30000-why-families-may-not-save-a-dime": {
+   "istock": "2244909743",
+   "name": "father-daughter-studying-kitchen-table",
+   "alt": "Father and teenage daughter studying together at the kitchen table",
+   "title": "A college cut tuition by $30,000"
+  },
+  "private-student-lending-nearly-doubles-at-sofi-what-does-that-mean-for-families-paying-for-college": {
+   "istock": "699250930",
+   "name": "father-son-serious-conversation",
+   "alt": "Father having a serious conversation with his teenage son",
+   "title": "Private student lending and paying for college"
+  },
+  "does-the-psat-still-matter-in-2026": {
+   "istock": "2227835236",
+   "name": "high-school-student-psat-classroom",
+   "alt": "Smiling high school student holding books in a classroom",
+   "title": "Does the PSAT still matter in 2026"
+  },
+  "trump-accounts-vs-529-plans-what-families-saving-for-college-need-to-know": {
+   "istock": "1427687224",
+   "name": "advisor-reviewing-options-with-couple",
+   "alt": "Advisor going over paperwork and options with a couple",
+   "title": "Trump Accounts vs 529 plans"
+  },
+  "return-on-education-roe-by-major-the-college-ranking-families-should-be-paying-attention-to": {
+   "istock": "854184964",
+   "name": "graduate-celebrating-with-family",
+   "alt": "High school graduate in cap and gown smiling with his parents outdoors",
+   "title": "Return on Education by major"
+  },
+  "merit-aid-vs-need-based-aid-what-every-parent-should-understand-before-choosing-a-school": {
+   "istock": "1576360449",
+   "name": "parent-student-meeting-school-staff",
+   "alt": "Mother and daughter greeting a school staff member in a hallway",
+   "title": "Merit aid vs need-based aid"
+  },
+  "choosing-a-major-that-pays-aligning-college-with-career": {
+   "istock": "1310501829",
+   "name": "student-celebrating-career-success-laptop",
+   "alt": "Young woman celebrating at her laptop after landing a job she wanted",
+   "title": "Choosing a major that pays"
+  },
+  "from-application-to-admission-the-insiders-timeline": {
+   "istock": "1576355782",
+   "name": "student-hugging-mother-college-acceptance",
+   "alt": "Student hugging her mother after being accepted into the school she wanted",
+   "title": "From application to admission timeline"
+  },
+  "the-roi-of-college-how-families-save-56000": {
+   "istock": "1202800604",
+   "name": "proud-father-and-teenage-son",
+   "alt": "Proud father with his arm around his teenage son outdoors",
+   "title": "The ROI of college"
+  },
+  "the-career-first-college-planning-playbook": {
+   "istock": "2162427335",
+   "name": "mentor-walking-with-teen-career-advice",
+   "alt": "Adult mentor walking and talking with a teenage boy about his plans",
+   "title": "The career first college planning playbook"
+  },
+  "cracking-the-code-on-college-financial-aid": {
+   "istock": "2198017658",
+   "name": "mother-son-looking-at-phone-together",
+   "alt": "Mother and teenage son looking at a phone together at the table",
+   "title": "Cracking the code on college financial aid"
+  },
+  "july-webinar": {
+   "istock": "1175309338",
+   "name": "student-thinking-about-career-choices",
+   "alt": "Teenage girl thinking about career choices, with drawn gears and ideas above her head",
+   "title": "It's not what college, it's what career"
+  },
+  "june-webinar-college-career-planning-process": {
+   "istock": "2202223601",
+   "name": "father-helping-daughter-on-laptop",
+   "alt": "Father helping his teenage daughter with work on a laptop",
+   "title": "Jumpstart the college and career planning process"
+  },
+  "may-webinar-high-school-internships": {
+   "istock": "2216335990",
+   "name": "teen-girl-hands-on-outdoor-work",
+   "alt": "Teenage girl repairing a fence outdoors",
+   "title": "High school internships"
+  },
+  "april-family-webinar-visiting-colleges-this-spring-and-summer-what-to-know-before-you-go": {
+   "istock": "2177650975",
+   "name": "father-daughter-walking-together",
+   "alt": "Father and daughter walking together along a street",
+   "title": "Visiting colleges this spring and summer"
+  },
+  "march-why-parents-should-promote-their-childs-career-exploration-as-early-as-9th-grade": {
+   "istock": "2227835970",
+   "name": "high-school-students-science-experiment",
+   "alt": "High school students examining a plant in a classroom science experiment",
+   "title": "Career exploration starting in 9th grade"
+  },
+  "december-end-of-year-wrap-up": {
+   "istock": "2261214619",
+   "name": "student-writing-end-of-year-plans",
+   "alt": "Teenage student writing notes at home on the sofa",
+   "title": "End of year wrap up"
+  },
+  "november-how-to-navigate-the-act-sat-with-confidence": {
+   "istock": "1688363675",
+   "name": "student-concentrating-on-study-notes",
+   "alt": "Student concentrating on her study notes at a cafe table",
+   "title": "How to navigate the ACT and SAT with confidence"
+  },
+  "october-the-cost-of-college-family-budgeting": {
+   "istock": "1810185141",
+   "name": "father-listening-to-teenage-son",
+   "alt": "Father listening to his teenage son during a serious talk",
+   "title": "The cost of college and family budgeting"
+  },
+  "september-its-more-than-just-grades": {
+   "istock": "538447408",
+   "name": "student-giving-speech-activities",
+   "alt": "High school student giving a speech at a microphone",
+   "title": "It's more than just grades"
+  },
+  "august-types-of-applications-navigating-college-decision-days": {
+   "istock": "2220588617",
+   "name": "thoughtful-teen-with-notebook",
+   "alt": "Thoughtful teenage girl with a notebook and pen",
+   "title": "Types of applications and college decision days"
+  },
+  "july-common-app-101": {
+   "istock": "1051247474",
+   "name": "mother-encouraging-son-writing",
+   "alt": "Mother encouraging her teenage son as he writes at the table",
+   "title": "Common App 101"
+  },
+  "how-to-make-the-most-of-your-winter-break": {
+   "istock": "1629591785",
+   "name": "father-daughter-talking-at-home-winter-break",
+   "alt": "Father and teenage daughter talking and laughing at home",
+   "title": "Make the most of winter break"
+  },
+  "help-what-should-we-pack-for-freshman-year": {
+   "istock": "1397415024",
+   "name": "father-helping-son-pack-for-college",
+   "alt": "Father helping his son pack to move out for freshman year of college",
+   "title": "What to pack for the freshman year dorm"
+  },
+  "college-planning-measurable-results": {
+   "istock": "2207761177",
+   "name": "student-celebrating-college-planning-results",
+   "alt": "Student celebrating a good result in a library",
+   "title": "Measurable results from college planning"
+  }
+ }
+}
