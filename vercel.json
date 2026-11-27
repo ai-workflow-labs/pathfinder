@@ -1,0 +1,17 @@
+{
+  "redirects": [
+    { "source": "/sitemap.xml", "destination": "/sitemap_index.xml", "permanent": true },
+    { "source": "/checkout/", "destination": "/cart/", "permanent": false },
+    { "source": "/checkout", "destination": "/cart/", "permanent": false },
+    { "source": "/homepage-v2/", "destination": "/", "permanent": true },
+    { "source": "/homepage-v2", "destination": "/", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/feed/", "destination": "/feed.xml" },
+    { "source": "/feed", "destination": "/feed.xml" }
+  ],
+  "headers": [
+    { "source": "/(feed|feed/|feed\\.xml)", "headers": [{ "key": "Content-Type", "value": "application/rss+xml; charset=UTF-8" }] },
+    { "source": "/llms.txt", "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }] }
+  ]
+}

@@ -218,6 +218,10 @@ FP_FAQS = [
 POST_PAGES = json.loads((ROOT_DIR / "src" / "data" / "post_pages.json").read_text(encoding="utf-8"))
 CATEGORY_PAGES = json.loads((ROOT_DIR / "src" / "data" / "categories.json").read_text(encoding="utf-8"))
 LOCATIONS = json.loads((ROOT_DIR / "src" / "data" / "locations.json").read_text(encoding="utf-8"))
+TAG_PAGES = json.loads((ROOT_DIR / "src" / "data" / "tags.json").read_text(encoding="utf-8"))  # tools/import_tags.py
+LLMS = json.loads((ROOT_DIR / "src" / "data" / "llms.json").read_text(encoding="utf-8"))  # tools/import_llms.py
+OLD_LASTMOD = json.loads((ROOT_DIR / "src" / "data" / "old_lastmod.json").read_text(encoding="utf-8"))["urls"]
+POST_GUIDS = json.loads((ROOT_DIR / "src" / "data" / "post_guids.json").read_text(encoding="utf-8"))
 
 PAGES = [
     dict(src="index.html", out="index.html", path="/", nav="home",
@@ -322,6 +326,26 @@ PAGES = [
     # /blog-page/ was the old WordPress posts page: title only, no description.
     dict(src="category", cat={"slug": "__all__", "name": "Blog", "path": "/blog-page/"}, out="blog-page/index.html",
          path="/blog-page/", nav="resources", title="Blog - Pathfinders Advisors", desc="", og=LOGO_STACK, name="Blog"),
+] + [
+    # Store pages: the old WooCommerce store showed this "coming soon" notice to visitors.
+    dict(src="store-coming-soon.html", out="shop/index.html", path="/shop/", nav="",
+         title="Pathfinders Advisors Store \u2013 Innovative Solutions Await",
+         desc="Explore innovative solutions at Pathfinders Advisors. Discover upcoming products that transform your business. Visit our shop and stay ahead!",
+         og=LOGO_STACK, name="Shop"),
+    dict(src="store-coming-soon.html", out="product/college-planning-essentials/index.html", path="/product/college-planning-essentials/", nav="",
+         title="College Planning Essentials - Pathfinders Advisors",
+         desc="Unlock your future with College Planning Essentials. Plan now for success and secure your spot. Visit us today and take the first step!",
+         og=WP + "2025/05/Congrats-1024x1024.png", name="College Planning Essentials"),
+    dict(src="store-coming-soon.html", out="cart/index.html", path="/cart/", nav="", title="Cart - Pathfinders Advisors",
+         desc="You may be interested in\u2026 Your cart is currently empty! New in store", og=LOGO_STACK, name="Cart",
+         noindex=True, canonical=False),
+    dict(src="thank-you-page.html", out="thank-you-page/index.html", path="/thank-you-page/", nav="", title="Thank you",
+         desc="Thank you", og=LOGO_STACK, name="Thank you", noindex=True, canonical=False),
+] + [
+    # Tag archives: "follow, noindex" with no description and no canonical on the old site.
+    dict(src="category", cat=dict(t, kind="Tag"), out=t["path"].strip("/") + "/index.html", path=t["path"], nav="resources",
+         title=t["meta_title"], desc="", og=LOGO_STACK, name=t["name"], noindex=True, canonical=False)
+    for t in TAG_PAGES
 ] + [
     dict(src="404.html", out="404.html", path="/404/", nav="", title="Page not found | Pathfinders Advisors",
          desc="This page could not be found.", og=LOGO_STACK, name="Not found", noindex=True),
@@ -783,7 +807,8 @@ def post_body(x, root):
                     f'sizes="(max-width: 820px) 100vw, 760px" alt="{e(photo["alt"])}" title="{e(photo["title"])}" width="1200" height="800"></figure>')
     elif img and "Pathfinders_stack_RGB" not in img and "logo" not in img.lower() and not in_body(img, x["body"]):
         hero_img = f'<figure class="post-hero-img"><img src="{e(img)}" alt="{e(x.get("og_alt") or x["title"])}" width="1200" height="800"></figure>'
-    tags = "".join(f'<li>{e(t)}</li>' for t in x.get("tags", []))
+    tag_paths = {t["name"]: t["path"] for t in TAG_PAGES}
+    tags = "".join(f'<li><a href="{link(tag_paths[t], root)}">{e(t)}</a></li>' if t in tag_paths else f'<li>{e(t)}</li>' for t in x.get("tags", []))
     tags_html = f'<div class="post-tags"><h2>Topics</h2><ul>{tags}</ul></div>' if tags else ""
     mine = {c["slug"] for c in cats} - {"blog", "high-school"} or {c["slug"] for c in cats}
     related = [y for y in POST_PAGES if y["slug"] != x["slug"] and mine & {c["slug"] for c in y.get("categories") or []}][:3]
@@ -805,12 +830,17 @@ def post_body(x, root):
 
 
 def category_body(c, root):
-    items = ARTICLES if c["slug"] == "__all__" else [a for a in ARTICLES if c["slug"] in {k["slug"] for k in next((y.get("categories") or [] for y in POST_PAGES if y["slug"] == a[1]), [])}]
+    if "posts" in c:  # tag archive
+        items = [a for a in ARTICLES if a[1] in set(c["posts"])]
+    else:
+        items = ARTICLES if c["slug"] == "__all__" else [a for a in ARTICLES if c["slug"] in {k["slug"] for k in next((y.get("categories") or [] for y in POST_PAGES if y["slug"] == a[1]), [])}]
     cards = "".join(post_card(a, root) for a in items)
+    if not items:
+        cards = f'<p class="muted">No articles under this topic yet. <a href="{root}resources/">Browse the knowledge base</a>.</p>'
     desc = f'<p class="lead">{e(c["description"])}</p>' if c.get("description") else ""
     return (f'<section class="page-hero">{ROUTE_SVG}<div class="container">'
             f'<nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="{root}">Home</a></li><li><a href="{root}resources/">Knowledge Base</a></li><li aria-current="page">{e(c["name"])}</li></ol></nav>'
-            f'<span class="eyebrow">Category</span><h1>{e(c["name"])}</h1>{desc}'
+            f'<span class="eyebrow">{c.get("kind", "Category")}</span><h1>{e(c["name"])}</h1>{desc}'
             f'<p class="hero-note">{len(items)} article{"s" if len(items) != 1 else ""}</p></div></section>'
             f'<section class="section"><div class="container"><div class="grid-3 cards-wrap">{cards}</div></div></section>'
             "{{CTA}}")
@@ -1079,6 +1109,7 @@ def layout(p, body, root):
 <link rel="icon" href="{WP}2025/01/cropped-Pathfinders_hor_RGB-32x32.png" sizes="32x32">
 <link rel="icon" href="{WP}2025/01/cropped-Pathfinders_hor_RGB-192x192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="{WP}2025/01/cropped-Pathfinders_hor_RGB-180x180.png">
+<link rel="alternate" type="application/rss+xml" title="Pathfinders Advisors &raquo; Feed" href="{SITE}/feed/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700;800&display=swap">
@@ -1149,6 +1180,8 @@ def render_body(text, ctx):
             return ROUTE_SVG
         if name == "SITE":
             return SITE
+        if name == "NAME":
+            return e(ctx["page"]["name"])
         if name == "WP":
             return WP
         if name == "BOOK_URL":
@@ -1162,6 +1195,102 @@ def render_body(text, ctx):
         raise KeyError(f"Unknown token {name}")
     out = TOKEN.sub(rep, text)
     return mark_roe(TOKEN.sub(rep, out))  # second pass for tokens produced by renderers
+
+
+def page_lastmod(p):
+    old = OLD_LASTMOD.get(p["path"], {}).get("lastmod")
+    if old:
+        return old
+    x = p.get("post") or {}
+    return x.get("modified_time") or x.get("published") or ""
+
+
+def sitemap_group(p):
+    old = OLD_LASTMOD.get(p["path"], {}).get("type")
+    if old:
+        return old
+    return {"post": "post", "category": "category"}.get(p["src"], "page")
+
+
+def write_site_files():
+    """robots.txt, the sitemaps (same file names as the old Rank Math ones), llms.txt,
+    the RSS feed and favicon.ico. A review build blocks all crawling in robots.txt."""
+    def xml(t):
+        return html.escape(t, quote=False)
+    if LIVE:
+        robots = (ROOT_DIR / "src" / "robots-live.txt").read_text(encoding="utf-8")
+    else:
+        robots = "# Review build: not for search engines. The live build serves the real robots.txt.\nUser-agent: *\nDisallow: /\n"
+    (OUT / "robots.txt").write_text(robots, encoding="utf-8")
+
+    # Sitemaps, grouped as on the old site: post, page, product, category.
+    groups = {}
+    for p in PAGES:
+        if p["src"] == "404.html" or p.get("noindex"):
+            continue
+        groups.setdefault(sitemap_group(p), []).append(p)
+    head = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    index = []
+    for g in ("post", "page", "product", "category"):
+        items = groups.get(g, [])
+        if not items:
+            continue
+        rows = "".join(f"\t<url>\n\t\t<loc>{SITE}{p['path']}</loc>\n"
+                       + (f"\t\t<lastmod>{page_lastmod(p)}</lastmod>\n" if page_lastmod(p) else "") + "\t</url>\n" for p in items)
+        (OUT / f"{g}-sitemap.xml").write_text(head + rows + "</urlset>\n", encoding="utf-8")
+        last = max((page_lastmod(p) for p in items), default="")
+        index.append(f"\t<sitemap>\n\t\t<loc>{SITE}/{g}-sitemap.xml</loc>\n" + (f"\t\t<lastmod>{last}</lastmod>\n" if last else "") + "\t</sitemap>\n")
+    (OUT / "sitemap_index.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                                          + "".join(index) + "</sitemapindex>\n", encoding="utf-8")
+
+    # llms.txt in the old Rank Math layout: posts, pages, course platform, products.
+    indexed = {p["path"]: p for p in PAGES if p["src"] != "404.html" and not p.get("noindex")}
+
+    def line(p):
+        d = LLMS["desc"][p["path"]] if p["path"] in LLMS["desc"] else p["desc"]
+        name = LLMS["names"].get(p["path"]) or (p["post"]["title"] if p["src"] == "post" else p["name"])
+        return f"- [{name}]({SITE}{p['path']})" + (f": {d}" if d else "")
+    posts = [indexed[x["path"]] for x in POST_PAGES if x["path"] in indexed]
+    def is_page(path):
+        return (indexed[path]["src"] not in ("post", "category") or path == "/blog-page/") and not path.startswith("/product/")
+    order = [path for path in LLMS["page_order"] if path in indexed and is_page(path)]
+    order += [path for path in indexed if path not in order and is_page(path)]
+    out = [f"# {LLMS['title']}", "", "## Sitemaps", f"[XML Sitemap]({SITE}/sitemap_index.xml): Includes all crawlable and indexable pages.", "",
+           "## Posts", *[line(p) for p in posts], "", "## Pages", *[line(indexed[path]) for path in order],
+           *LLMS["lms_pages"], ""]
+    for sec in ("Courses", "Lessons", "Quizzes"):
+        out += [f"## {sec}", *LLMS["lms_sections"][sec], ""]
+    out += ["## Products", f"- [College Planning Essentials]({SITE}/product/college-planning-essentials/)", ""]
+    (OUT / "llms.txt").write_text("\n".join(out), encoding="utf-8")
+
+    # RSS feed of the 10 newest indexable posts, served at /feed/ (vercel.json).
+    def rfc822(x):
+        stamp = x.get("published") or (x["date"] + "T00:00:00+00:00")
+        return dt.datetime.fromisoformat(stamp).astimezone(dt.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+    items = []
+    for x in [x for x in POST_PAGES if x["path"] in indexed][:10]:
+        excerpt = next((a[6] for a in ARTICLES if a[1] == x["slug"]), "")
+        names = [c["name"] for c in x.get("categories") or []] + x.get("tags", [])
+        cats = "".join(f"\t\t<category><![CDATA[{c}]]></category>\n" for c in names)
+        body = x["body"].replace("]]>", "]]]]><![CDATA[>")
+        items.append(f"\t<item>\n\t\t<title>{xml(x['title'])}</title>\n\t\t<link>{SITE}{x['path']}</link>\n"
+                     f"\t\t<dc:creator><![CDATA[{x.get('author') or ORG_NAME}]]></dc:creator>\n\t\t<pubDate>{rfc822(x)}</pubDate>\n{cats}"
+                     f"\t\t<guid isPermaLink=\"false\">{xml(POST_GUIDS.get(x['slug'], SITE + x['path']))}</guid>\n"
+                     f"\t\t<description><![CDATA[{excerpt}]]></description>\n"
+                     f"\t\t<content:encoded><![CDATA[{body}]]></content:encoded>\n\t</item>\n")
+    newest = rfc822(POST_PAGES[0]) if POST_PAGES else ""
+    (OUT / "feed.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" '
+        'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n'
+        f'\t<title>Pathfinders Advisors</title>\n\t<atom:link href="{SITE}/feed/" rel="self" type="application/rss+xml" />\n'
+        f'\t<link>{SITE}</link>\n\t<description>Career First. College Second. &#124; Education Investment Advisors</description>\n'
+        f'\t<lastBuildDate>{newest}</lastBuildDate>\n\t<language>en-US</language>\n'
+        f'<image>\n\t<url>{WP}2025/01/cropped-Pathfinders_hor_RGB-32x32.png</url>\n\t<title>Pathfinders Advisors</title>\n'
+        f'\t<link>{SITE}</link>\n\t<width>32</width>\n\t<height>32</height>\n</image>\n'
+        + "".join(items) + "</channel>\n</rss>\n", encoding="utf-8")
+
+    # favicon.ico: the old site redirected it to the 32px PNG; this is a real .ico of the same icon.
+    shutil.copyfile(ROOT_DIR / "assets" / "favicon.ico", OUT / "favicon.ico")
 
 
 def build():
@@ -1190,11 +1319,7 @@ def build():
         dest.write_text(local_uploads(layout(p, body, root), root), encoding="utf-8")
         print("built", p["out"])
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
-    robots = "User-agent: *\nDisallow: /\n" if not LIVE else f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n"
-    (OUT / "robots.txt").write_text(robots, encoding="utf-8")
-    if LIVE:
-        urls = "".join(f"<url><loc>{SITE}{p['path']}</loc></url>" for p in PAGES if not p.get("noindex"))
-        (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>', encoding="utf-8")
+    write_site_files()
     print("done:", "LIVE build" if LIVE else "review build (noindex)")
 
 
