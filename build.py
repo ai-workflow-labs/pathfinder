@@ -286,6 +286,10 @@ PAGES = [
          title=c["meta_title"], desc=c["desc"], og=c.get("og") or LOGO_STACK, name=c["name"])
     for c in CATEGORY_PAGES
 ] + [
+    # /blog-page/ was the old WordPress posts page: title only, no description.
+    dict(src="category", cat={"slug": "__all__", "name": "Blog", "path": "/blog-page/"}, out="blog-page/index.html",
+         path="/blog-page/", nav="resources", title="Blog - Pathfinders Advisors", desc="", og=LOGO_STACK, name="Blog"),
+] + [
     dict(src="404.html", out="404.html", path="/404/", nav="", title="Page not found | Pathfinders Advisors",
          desc="This page could not be found.", og=LOGO_STACK, name="Not found", noindex=True),
 ]
@@ -752,7 +756,7 @@ def post_body(x, root):
 
 
 def category_body(c, root):
-    items = [a for a in ARTICLES if c["slug"] in {k["slug"] for k in next((y.get("categories") or [] for y in POST_PAGES if y["slug"] == a[1]), [])}]
+    items = ARTICLES if c["slug"] == "__all__" else [a for a in ARTICLES if c["slug"] in {k["slug"] for k in next((y.get("categories") or [] for y in POST_PAGES if y["slug"] == a[1]), [])}]
     cards = "".join(post_card(a, root) for a in items)
     desc = f'<p class="lead">{e(c["description"])}</p>' if c.get("description") else ""
     return (f'<section class="page-hero">{ROUTE_SVG}<div class="container">'
@@ -1010,14 +1014,14 @@ def layout(p, body, root):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(p["title"])}</title>
-<meta name="description" content="{e(p["desc"])}">
+{f'<meta name="description" content="{e(p["desc"])}">' if p["desc"] else ""}
 <meta name="robots" content="{robots}">
 {canon_tag}
 <meta property="og:locale" content="en_US">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Pathfinders Advisors">
 <meta property="og:title" content="{e(p["title"])}">
-<meta property="og:description" content="{e(p["desc"])}">
+{f'<meta property="og:description" content="{e(p["desc"])}">' if p["desc"] else ""}
 <meta property="og:url" content="{canonical}">
 <meta property="og:image" content="{p["og"]}">
 <meta name="twitter:card" content="summary_large_image">
